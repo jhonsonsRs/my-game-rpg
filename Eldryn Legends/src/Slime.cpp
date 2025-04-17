@@ -10,6 +10,7 @@ const int slimeWidth = 32;
 
 Slime::Slime(const int x, const int y) :
     Entity(x, y, speed, slimeHp, slimeWidth, slimeHeight),
+    currentDirection(Direction::RIGHT),
     slimeDamage(5) {}
 
 Slime::~Slime(){}
@@ -17,21 +18,52 @@ Slime::~Slime(){}
 void Slime::handleEvents(float dt, const Uint8* keys){}
 
 void Slime::render(SDL_Renderer* renderer){
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 50, 205, 50, 255);
     SDL_RenderFillRect(renderer, &rect);
 }
 
 void Slime::movimentation(float dt){
-    int choice = rand()%2;
-    switch(choice){
-        case 0:
+    this->decisionTimer -= dt;
 
-        break;
-        case 1:
-        
-        break;
-        case 2:
+    if(this->decisionTimer <= 0.0f){
+        int choice = rand()%5;
+        this->velocity = {0, 0};
 
-        break;
+        switch(choice){
+            case 0:
+                this->velocity.x = 0;
+                this->velocity.y = 0;
+                this->andar = false;
+            break;
+            case 1:
+                this->andar = true;
+                this->currentDirection = Direction::UP;
+                this->velocity.y = -this->speed;
+            break;
+            case 2:
+                this->andar = true;
+                this->currentDirection = Direction::DOWN;
+                this->velocity.y = this->speed;
+            break;
+            case 3:
+                this->andar = true;
+                this->currentDirection = Direction::RIGHT;
+                this->velocity.x = this->speed;
+            break;
+            case 4:
+                this->andar = true;
+                this->currentDirection = Direction::LEFT;
+                this->velocity.x = -this->speed;
+            break;
+        }
+
+        this->decisionTimer = 5.0f;
     }
+
+    if(andar){
+        this->position += this->velocity * dt;
+        this->rect.x = static_cast<int>(position.x);
+        this->rect.y = static_cast<int>(position.y);
+    }
+    
 }

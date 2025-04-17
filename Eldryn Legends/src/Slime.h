@@ -7,6 +7,10 @@ private:
     float speed = 80;
     int slimeHp = 50;
     int slimeDamage;
+    float decisionTimer = 0.0f;
+    bool andar;
+    enum class Direction { RIGHT, LEFT, UP, DOWN};
+    Direction currentDirection;
 public:
     Slime(const int x, const int y);
     ~Slime() override;

@@ -13,17 +13,17 @@ Warrior::~Warrior() {
 }
 
 void Warrior::handleEvents(float dt, const Uint8* keys){
-    if(keys[SDL_SCANCODE_UP]){
+    if(keys[SDL_SCANCODE_W]){
         this->velocity.y = -this->speed;
-    } else if(keys[SDL_SCANCODE_DOWN]) {
+    } else if(keys[SDL_SCANCODE_S]) {
         this->velocity.y = this->speed;
     } else {
         this->velocity.y = 0;
     }
 
-    if(keys[SDL_SCANCODE_LEFT]){
+    if(keys[SDL_SCANCODE_A]){
         this->velocity.x = -this->speed;
-    } else if(keys[SDL_SCANCODE_RIGHT]){
+    } else if(keys[SDL_SCANCODE_D]){
         this->velocity.x = this->speed;
     } else {
         this->velocity.x = 0;
