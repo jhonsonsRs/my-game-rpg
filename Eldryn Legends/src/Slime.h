@@ -15,7 +15,7 @@ public:
 
     void render(SDL_Renderer* renderer, const SDL_Rect& camera) override;
     void handleEvents(float dt, const Uint8* keys) override;
-    void movimentation(float dt);
+    void update(float dt) override;
     int getSlimeDamage(){
         return this->slimeDamage;
     }

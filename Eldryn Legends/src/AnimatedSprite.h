@@ -14,7 +14,7 @@ private:
     float elapsedTime;
     std::vector<SDL_Rect> frames;
 public:
-    AnimatedSprite(SDL_Texture* spriteAtlas, int framWidth, int framHeight, int frameCount, float frameDuration, bool loop = true);
+    AnimatedSprite(SDL_Texture* spriteAtlas, int framWidth, int framHeight, int frameCount, float frameDuration);
     ~AnimatedSprite();
 
     void update(float dt);

@@ -20,62 +20,61 @@ bool colision(float ax, float ay, float aWidth, float aHeight, float bx, float b
 }
 
 void GameWorld::map(){
-    mapData = new int*[MAP_HEIGHT];
-    /*for(int i = 0; i < MAP_HEIGHT; i++){
-        mapData[i] = new int[MAP_WIDTH] {
-            6, 6, 6, 6, 6, 6, 6, 6, 6, 6
+    mapTerrain1 = new int*[MAP_HEIGHT];
+    mapTerrain2 = new int*[MAP_HEIGHT];
+
+    for(int i = 0; i < MAP_HEIGHT; i++){
+        mapTerrain1[i] = new int[MAP_WIDTH]{
+            6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6
         };
-    }*/
-    mapData[0] = new int[MAP_WIDTH]{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-    mapData[1] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[2] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[3] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[4] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[5] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[6] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[7] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[8] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[9] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[10] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[11] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[12] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[13] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[14] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[15] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[16] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[17] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[18] = new int[MAP_WIDTH]{ 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 };
-    mapData[19] = new int[MAP_WIDTH]{ 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
+    }
+
+    for(int i = 0; i < MAP_HEIGHT; i++){
+        mapTerrain2[i] = new int[MAP_WIDTH] {
+            -1, -1, -1, -1, -1, -1, -1, -1, 5, 5, 5, 5, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 5, 5, 7, 5, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 5, 5, 5, 5, 5, -1, -1, -1, -1, -1, -1, -1
+        };
+    }
 }
 
-GameWorld::GameWorld(SDL_Renderer* renderer) : camera(){
+GameWorld::GameWorld(SDL_Renderer* renderer, 
+    SDL_Texture* spriteAtlasRight, 
+    SDL_Texture* spriteAtlasUp, 
+    SDL_Texture* spriteAtlasDown, 
+    SDL_Texture* spriteAtlasRight2, 
+    SDL_Texture* spriteAtlasUp2, 
+    SDL_Texture* spriteAtlasDown2) : camera() {
     map();
-    player = std::make_unique<Warrior>(BASE_WIDTH / 2, BASE_HEIGHT / 2);
+    player = std::make_unique<Warrior>(BASE_WIDTH / 2, BASE_HEIGHT / 2, spriteAtlasRight, spriteAtlasUp, spriteAtlasDown, spriteAtlasRight2, spriteAtlasUp2, spriteAtlasDown2);
     enemySlime = std::make_unique<Slime>(BASE_WIDTH / 2, BASE_HEIGHT / 2);
-    gameMap = std::make_unique<Map>(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/maps/tilesets.png", mapData, 16, MAP_WIDTH, MAP_HEIGHT);
+    gameTerrain1 = std::make_unique<Map>(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/maps/tilesets.png", mapTerrain1, 16, MAP_WIDTH, MAP_HEIGHT);
+    gameTerrain2 = std::make_unique<Map>(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/maps/tilesets.png", mapTerrain2, 16, MAP_WIDTH, MAP_HEIGHT);
 
 }
 
 GameWorld::~GameWorld(){
     for(int p = 0; p < MAP_HEIGHT; p++){
-        delete[] mapData[p];
+        delete[] mapTerrain1[p];
+        delete[] mapTerrain2[p];
     }
-    delete[] mapData;
+    delete[] mapTerrain1;
+    delete[] mapTerrain2;
 }
 
 void GameWorld::render(SDL_Renderer* renderer){
-    gameMap->render(renderer, camera.getView());
+    gameTerrain1->render(renderer, camera.getView());
+    gameTerrain2->render(renderer, camera.getView());
     player->render(renderer, camera.getView());
     enemySlime->render(renderer, camera.getView());
 }
 
 void GameWorld::update(float dt){
-    enemySlime->movimentation(dt);
+    player->update(dt);
+    enemySlime->update(dt);
 
     Vector position_slime = enemySlime->getPosition();
     Vector position_player = player->getPosition();
 
-    if(colision(position_slime.x, position_slime.y, 32, 32, position_player.x, position_player.y, 64, 64)){
+    if(colision(position_slime.x, position_slime.y, SLIME_WIDTH, SLIME_HEIGHT, position_player.x, position_player.y, PLAYER_WIDTH, PLAYER_HEIGHT)){
         std::cout<< "tocou" << std::endl;
 
     }
@@ -83,8 +82,8 @@ void GameWorld::update(float dt){
     camera.update(
         position_player.x, 
         position_player.y, 
-        SCREEN_WIDTH, 
-        SCREEN_HEIGHT);
+        MAP_WIDTH * 16, 
+        MAP_HEIGHT * 16);
 }
 
 void GameWorld::handleInput(float dt, const Uint8* keys){

@@ -17,6 +17,7 @@ public:
 
     virtual ~Entity() = default;
 
+    virtual void update(float dt) = 0;
     virtual void render(SDL_Renderer* renderer, const SDL_Rect& camera) = 0;
     virtual void handleEvents(float dt, const Uint8* keys) = 0;
 

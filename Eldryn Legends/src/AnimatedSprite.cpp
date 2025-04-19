@@ -2,9 +2,9 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
-AnimatedSprite::AnimatedSprite(SDL_Texture* spriteAtlas, int frameWidth, int frameHeight, int frameCount, float frameDuration, bool loop)
+AnimatedSprite::AnimatedSprite(SDL_Texture* spriteAtlas, int frameWidth, int frameHeight, int frameCount, float frameDuration)
     : spriteAtlas(spriteAtlas), frameWidth(frameWidth), frameHeight(frameHeight),
-      frameCount(frameCount), frameDuration(frameDuration), loop(loop),
+      frameCount(frameCount), frameDuration(frameDuration), loop(true),
       currentFrame(0), elapsedTime(0.0f)
 {
     for (int i = 0; i < this->frameCount; i++) {

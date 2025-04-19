@@ -41,10 +41,22 @@ bool GameManager::init(const char* title, int width, int height){
         return false;
     }   
 
+    warriorRightTexture = IMG_LoadTexture(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/sprites/playerRunRight.png");
+    warriorUpTexture = IMG_LoadTexture(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/sprites/playerRunUp.png");
+    warriorDownTexture = IMG_LoadTexture(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/sprites/playerRunDown.png");
+    warriorIdleRightTexture = IMG_LoadTexture(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/sprites/playerIdleRight.png");
+    warriorIdleUpTexture = IMG_LoadTexture(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/sprites/playerIdleUp.png");
+    warriorIdleDownTexture = IMG_LoadTexture(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/sprites/playerIdleDown.png");
+
+    if (!warriorRightTexture || !warriorUpTexture || !warriorDownTexture || !warriorIdleDownTexture || !warriorIdleRightTexture || !warriorIdleUpTexture) {
+        std::cerr << "Erro ao carregar as spritesheets do jogador: " << IMG_GetError() << std::endl;
+        return -1;
+    }
+
     
     SDL_RenderSetLogicalSize(renderer, BASE_WIDTH, BASE_HEIGHT);
 
-    world = std::make_unique<GameWorld>(renderer);
+    world = std::make_unique<GameWorld>(renderer, warriorRightTexture, warriorUpTexture, warriorDownTexture, warriorIdleRightTexture, warriorIdleUpTexture, warriorIdleDownTexture);
     this->isRunning = true;
     return true;
 }
@@ -86,6 +98,12 @@ void GameManager::render(float dt){
 
 void GameManager::clean(){
     world.reset();
+    SDL_DestroyTexture(warriorRightTexture);
+    SDL_DestroyTexture(warriorUpTexture);
+    SDL_DestroyTexture(warriorDownTexture);
+    SDL_DestroyTexture(warriorIdleDownTexture);
+    SDL_DestroyTexture(warriorIdleUpTexture);
+    SDL_DestroyTexture(warriorIdleRightTexture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

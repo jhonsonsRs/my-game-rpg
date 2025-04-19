@@ -10,6 +10,13 @@ private:
     SDL_Renderer* renderer;
     bool isRunning;
 
+    SDL_Texture* warriorRightTexture;
+    SDL_Texture* warriorUpTexture;
+    SDL_Texture* warriorDownTexture;
+    SDL_Texture* warriorIdleUpTexture;
+    SDL_Texture* warriorIdleRightTexture;
+    SDL_Texture* warriorIdleDownTexture;
+
     std::unique_ptr<GameWorld> world;
 public:
     GameManager();

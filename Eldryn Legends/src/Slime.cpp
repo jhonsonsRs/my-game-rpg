@@ -27,7 +27,7 @@ void Slime::render(SDL_Renderer* renderer, const SDL_Rect& camera){
     SDL_RenderFillRect(renderer, &renderRect);
 }
 
-void Slime::movimentation(float dt){
+void Slime::update(float dt){
     this->decisionTimer -= dt;
 
     if(this->decisionTimer <= 0.0f){

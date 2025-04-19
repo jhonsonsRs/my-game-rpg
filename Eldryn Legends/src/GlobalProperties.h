@@ -7,11 +7,13 @@ inline constexpr int SCREEN_HEIGHT = 576;
 
 inline constexpr int PLAYER_WIDTH = 16;
 inline constexpr int PLAYER_HEIGHT = 16;
+inline constexpr int SLIME_WIDTH = 16;
+inline constexpr int SLIME_HEIGHT = 16;
 
-inline constexpr int BASE_WIDTH = SCREEN_WIDTH / 3;
-inline constexpr int BASE_HEIGHT = SCREEN_HEIGHT / 3;
+inline constexpr int BASE_WIDTH = SCREEN_WIDTH / 2;
+inline constexpr int BASE_HEIGHT = SCREEN_HEIGHT / 2;
 
-inline constexpr int MAP_WIDTH = 20;
-inline constexpr int MAP_HEIGHT = 20;
+inline constexpr int MAP_WIDTH = 60;
+inline constexpr int MAP_HEIGHT = 60;
 
 #endif //GLOBALPROPERTIES
