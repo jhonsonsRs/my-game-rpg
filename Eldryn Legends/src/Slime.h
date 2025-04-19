@@ -4,8 +4,6 @@
 
 class Slime : public Entity{
 private:
-    float speed = 80;
-    int slimeHp = 50;
     int slimeDamage;
     float decisionTimer = 0.0f;
     bool andar;
@@ -15,7 +13,7 @@ public:
     Slime(const int x, const int y);
     ~Slime() override;
 
-    void render(SDL_Renderer* renderer) override;
+    void render(SDL_Renderer* renderer, const SDL_Rect& camera) override;
     void handleEvents(float dt, const Uint8* keys) override;
     void movimentation(float dt);
     int getSlimeDamage(){

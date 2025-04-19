@@ -1,10 +1,11 @@
-#include "Game.h"
+#include "GameManager.h"
+#include "GlobalProperties.h"
 
 int main(int argc, char* argv[]){
-    Game game;
+    GameManager game;
 
     srand(time(0));
-    if(!game.init("MonkeyQuest", 800, 600)){
+    if(!game.init("MonkeyQuest", SCREEN_WIDTH, SCREEN_HEIGHT)){
         return -1;
     }
 

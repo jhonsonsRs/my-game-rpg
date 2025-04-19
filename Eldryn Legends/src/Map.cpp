@@ -1,5 +1,6 @@
 #include "Map.h"
 #include <SDL2/SDL_image.h>
+#include "GlobalProperties.h"
 
 Map::Map(SDL_Renderer* renderer, const char* tilesetPath, int** data, int tileSize, int mapW, int mapH) :
     tileSize(tileSize), mapData(data), mapW(mapW), mapH(mapH){
@@ -12,17 +13,18 @@ Map::~Map(){
     SDL_DestroyTexture(tileset);
 }
 
-void Map::render(SDL_Renderer* renderer){
+void Map::render(SDL_Renderer* renderer, const SDL_Rect& camera){
+    int tilesPerRow = 7;
     for (int y = 0; y < mapH; ++y) {
         for (int x = 0; x < mapW; ++x) {
             int tileID = mapData[y][x];
 
-            srcRect.x = (tileID % 8) * tileSize;
-            srcRect.y = (tileID / 8) * tileSize;
+            srcRect.x = (tileID % tilesPerRow) * tileSize;
+            srcRect.y = (tileID / tilesPerRow) * tileSize;
             srcRect.w = srcRect.h = tileSize;
 
-            destRect.x = x * tileSize;
-            destRect.y = y * tileSize;
+            destRect.x = x * tileSize - camera.x;
+            destRect.y = y * tileSize - camera.y;
             destRect.w = destRect.h = tileSize;
 
             SDL_RenderCopy(renderer, tileset, &srcRect, &destRect);

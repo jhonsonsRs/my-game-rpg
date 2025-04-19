@@ -9,7 +9,7 @@ const int slimeHeight = 32;
 const int slimeWidth = 32;
 
 Slime::Slime(const int x, const int y) :
-    Entity(x, y, speed, slimeHp, slimeWidth, slimeHeight),
+    Entity(x, y, 80, 50, slimeWidth, slimeHeight),
     currentDirection(Direction::RIGHT),
     slimeDamage(5) {}
 
@@ -17,9 +17,14 @@ Slime::~Slime(){}
 
 void Slime::handleEvents(float dt, const Uint8* keys){}
 
-void Slime::render(SDL_Renderer* renderer){
+void Slime::render(SDL_Renderer* renderer, const SDL_Rect& camera){
+    SDL_Rect renderRect;
+    renderRect.x = rect.x - camera.x;
+    renderRect.y = rect.y - camera.y;
+    renderRect.w = rect.w;
+    renderRect.h = rect.h;
     SDL_SetRenderDrawColor(renderer, 50, 205, 50, 255);
-    SDL_RenderFillRect(renderer, &rect);
+    SDL_RenderFillRect(renderer, &renderRect);
 }
 
 void Slime::movimentation(float dt){

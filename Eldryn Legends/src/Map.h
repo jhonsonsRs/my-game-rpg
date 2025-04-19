@@ -12,5 +12,5 @@ private:
 public:
     Map(SDL_Renderer* renderer, const char* tilesetPath, int** data, int tileSize, int mapW, int mapH);
     ~Map();
-    void render(SDL_Renderer* renderer);
+    void render(SDL_Renderer* renderer, const SDL_Rect& camera);
 };

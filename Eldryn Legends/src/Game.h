@@ -10,18 +10,22 @@ class Map;
 
 class Game{
 private:
+
+    //GameManager
     SDL_Window* window;
     SDL_Renderer* renderer;
     /*SDL_Texture* mapTexture;
     SDL_Rect mapRect;
     SDL_Rect camera;*/
     bool isRunning;
+    
+    //GameWorld
     int** mapData;
 
     std::unique_ptr<Warrior> player;
     std::unique_ptr<Slime> enemySlime;
     std::unique_ptr<Map> gameMap;
-
+    
     //ponteiro inteligente que gerencia memória de forma automática. 
     //não precisa usar delete
 public:
