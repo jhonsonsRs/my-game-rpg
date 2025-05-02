@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include "C:\Users\Usuario\OneDrive\Área de Trabalho\Jogo C++\Eldryn Legends\math-vector.h"
+#include "C:\Games\Eldryn Legends\math-vector.h"
 using Vector = Mylib::Math::Vector<float, 2>;
 
 class Entity{

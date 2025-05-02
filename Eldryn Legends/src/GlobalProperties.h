@@ -7,8 +7,8 @@ inline constexpr int SCREEN_HEIGHT = 576;
 
 inline constexpr int PLAYER_WIDTH = 16;
 inline constexpr int PLAYER_HEIGHT = 16;
-inline constexpr int SLIME_WIDTH = 16;
-inline constexpr int SLIME_HEIGHT = 16;
+inline constexpr int GOBLIN_WIDTH = 16;
+inline constexpr int GOBLIN_HEIGHT = 16;
 
 inline constexpr int BASE_WIDTH = SCREEN_WIDTH / 2;
 inline constexpr int BASE_HEIGHT = SCREEN_HEIGHT / 2;

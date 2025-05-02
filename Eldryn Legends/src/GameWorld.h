@@ -2,24 +2,24 @@
 #include <memory>
 #include <SDL2/SDL.h>
 #include "Map.h"
-#include "Slime.h"
+#include "Goblin.h"  // Alterado para Goblin
 #include "Warrior.h"
 #include "Camera.h"
 #include "GameManager.h"
 
 class Map;
 class Warrior;
-class Slime;
+class Goblin;  // Alterado para Goblin
 
 class GameWorld{
 private:
     std::unique_ptr<Warrior> player;
-    std::unique_ptr<Slime> enemySlime;
+    std::unique_ptr<Goblin> enemyGoblin;  // Alterado para Goblin
     std::unique_ptr<Map> gameTerrain1;
     std::unique_ptr<Map> gameTerrain2;
-    Camera camera;
     int** mapTerrain1;
     int** mapTerrain2;
+    Camera camera;
 public:
     GameWorld(SDL_Renderer* renderer, 
         SDL_Texture* spriteAtlasRight, 

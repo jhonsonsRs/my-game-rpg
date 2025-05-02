@@ -7,134 +7,131 @@
 const int warriorHeight = 64;
 const int warriorWidth = 64;
 
-Warrior::Warrior(const int x, const int y, SDL_Texture* spriteAtlasRight, SDL_Texture* spriteAtlasUp, SDL_Texture* spriteAtlasDown, SDL_Texture* spriteAtlasRight2, SDL_Texture* spriteAtlasUp2, SDL_Texture* spriteAtlasDown2) : 
+Warrior::Warrior(const int x, const int y, SDL_Texture* spriteAtlasRight, SDL_Texture* spriteAtlasUp, SDL_Texture* spriteAtlasDown, SDL_Texture* spriteAtlasRight2, SDL_Texture* spriteAtlasUp2, SDL_Texture* spriteAtlasDown2) :
     Entity(x, y, 50, 100, PLAYER_WIDTH, PLAYER_HEIGHT),
     spriteRight(spriteAtlasRight, 16, 16, 4, 0.1f),
     spriteUp(spriteAtlasUp, 16, 16, 4, 0.1f),
     spriteDown(spriteAtlasDown, 16, 16, 4, 0.1f),
-    spriteIdleRight(spriteAtlasRight2, 16, 16, 2, 0.1f),
-    spriteIdleUp(spriteAtlasUp2, 16, 16, 2, 0.1f),
-    spriteIdleDown(spriteAtlasDown2, 16, 16, 2, 0.1f),
+    spriteIdleRight(spriteAtlasRight2, 16, 16, 2, 0.5f),
+    spriteIdleUp(spriteAtlasUp2, 16, 16, 2, 0.5f),
+    spriteIdleDown(spriteAtlasDown2, 16, 16, 2, 0.5f),
     currentDirection(Direction::RIGHT),
     lastDirection(Direction::RIGHT),
-    swordDamage(20){}
+    swordDamage(20) {}
 
 Warrior::~Warrior() {
 }
 
-void Warrior::handleEvents(float dt, const Uint8* keys){
-    if(keys[SDL_SCANCODE_W]){
+void Warrior::handleEvents(float dt, const Uint8* keys) {
+    if (keys[SDL_SCANCODE_W]) {
         this->velocity.y = -this->speed;
         this->currentDirection = Direction::UP;
         this->lastDirection = Direction::UP;
-    } else if(keys[SDL_SCANCODE_S]) {
+    }
+    else if (keys[SDL_SCANCODE_S]) {
         this->velocity.y = this->speed;
         this->currentDirection = Direction::DOWN;
         this->lastDirection = Direction::DOWN;
-    } else {
+    }
+    else {
         this->velocity.y = 0;
     }
 
-    if(keys[SDL_SCANCODE_A]){
+    if (keys[SDL_SCANCODE_A]) {
         this->velocity.x = -this->speed;
         this->currentDirection = Direction::LEFT;
         this->lastDirection = Direction::LEFT;
-    } else if(keys[SDL_SCANCODE_D]){
+    }
+    else if (keys[SDL_SCANCODE_D]) {
         this->velocity.x = this->speed;
         this->currentDirection = Direction::RIGHT;
         this->lastDirection = Direction::RIGHT;
-    } else {
+    }
+    else {
         this->velocity.x = 0;
     }
 
-    if(velocity.x == 0 || velocity.y == 0){
-        idle = true;
+    if (this->velocity.x == 0 || this->velocity.y == 0) {
+        this->idle = true;
     }
 
     this->position += this->velocity * dt;
-    this->rect.x = static_cast<int>(position.x);
-    this->rect.y = static_cast<int>(position.y);
+    this->rect.x = static_cast<int>(this->position.x);
+    this->rect.y = static_cast<int>(this->position.y);
 }
 
-void Warrior::update(float dt){
-    
-    if(currentDirection == Direction::UP && velocity.y == 0){
-        //std::cout << "parado para cima" << std::endl;
-        spriteIdleUp.update(dt);
+void Warrior::update(float dt) {
+
+    if (this->currentDirection == Direction::UP && this->velocity.y == 0) {
+        this->spriteIdleUp.update(dt);
     }
 
-    if(currentDirection == Direction::DOWN && velocity.y == 0){
-        //std::cout << "parado para baixo" << std::endl;
-        spriteIdleDown.update(dt);
+    if (this->currentDirection == Direction::DOWN && this->velocity.y == 0) {
+        this->spriteIdleDown.update(dt);
     }
 
-    if(currentDirection == Direction::LEFT && velocity.x == 0){
-        //std::cout << "parado para esquerda" << std::endl;
-        spriteIdleRight.update(dt);
+    if (this->currentDirection == Direction::LEFT && this->velocity.x == 0) {
+        this->spriteIdleRight.update(dt);
     }
 
-    if(currentDirection == Direction::RIGHT && velocity.x == 0){
-        //std::cout << "parado para direita" << std::endl;
-        spriteIdleRight.update(dt);
+    if (this->currentDirection == Direction::RIGHT && this->velocity.x == 0) {
+        this->spriteIdleRight.update(dt);
     }
 
-    switch(currentDirection){
-        case Direction::RIGHT:
-            spriteRight.update(dt);
+    switch (this->currentDirection) {
+    case Direction::RIGHT:
+        this->spriteRight.update(dt);
         break;
-        case Direction::LEFT:
-            spriteRight.update(dt);
+    case Direction::LEFT:
+        this->spriteRight.update(dt);
         break;
-        case Direction::UP:
-            spriteUp.update(dt);
+    case Direction::UP:
+        this->spriteUp.update(dt);
         break;
-        case Direction::DOWN:
-            spriteDown.update(dt);
+    case Direction::DOWN:
+        this->spriteDown.update(dt);
         break;
     }
 }
 
-void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera){
+void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera) {
     SDL_Rect renderRect;
-    renderRect.x = rect.x - camera.x;
-    renderRect.y = rect.y - camera.y;
-    renderRect.w = rect.w;
-    renderRect.h = rect.h;
+    renderRect.x = this->rect.x - camera.x;
+    renderRect.y = this->rect.y - camera.y;
+    renderRect.w = this->rect.w;
+    renderRect.h = this->rect.h;
 
-
-    //a sprite do player parado só vai ser desenhado se o x ou y da velocidade for 0
-    if(currentDirection == Direction::UP && velocity.y == 0){
-      spriteIdleUp.render(renderer, renderRect.x, renderRect.y);
+    // A sprite do player parado só vai ser desenhada se o x ou y da velocidade for 0
+    if (this->currentDirection == Direction::UP && this->velocity.y == 0) {
+        this->spriteIdleUp.render(renderer, renderRect.x, renderRect.y);
     }
 
-    if(currentDirection == Direction::DOWN && velocity.y == 0){
-        spriteIdleDown.render(renderer, renderRect.x, renderRect.y);
+    if (this->currentDirection == Direction::DOWN && this->velocity.y == 0) {
+        this->spriteIdleDown.render(renderer, renderRect.x, renderRect.y);
     }
 
-    if(currentDirection == Direction::LEFT && velocity.x == 0){
-        spriteIdleRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
+    if (this->currentDirection == Direction::LEFT && this->velocity.x == 0) {
+        this->spriteIdleRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
     }
 
-    if(currentDirection == Direction::RIGHT && velocity.x == 0){
-        spriteIdleRight.render(renderer, renderRect.x, renderRect.y);
+    if (this->currentDirection == Direction::RIGHT && this->velocity.x == 0) {
+        this->spriteIdleRight.render(renderer, renderRect.x, renderRect.y);
     }
 
-
-
-    //A sprite do player andando só vai ser desehada se o x ou y da velocidade for diferente de 0
-    if(currentDirection == Direction::RIGHT && velocity.x != 0){
-        spriteRight.render(renderer, renderRect.x, renderRect.y);
+    // A sprite do player andando só vai ser desenhada se o x ou y da velocidade for diferente de 0
+    if (this->currentDirection == Direction::RIGHT && this->velocity.x != 0) {
+        this->spriteRight.render(renderer, renderRect.x, renderRect.y);
     }
 
-    if(currentDirection == Direction::LEFT && velocity.x != 0){
-        spriteRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
+    if (this->currentDirection == Direction::LEFT && this->velocity.x != 0) {
+        this->spriteRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
     }
 
-    if(currentDirection == Direction::UP && velocity.y != 0){
-        spriteUp.render(renderer, renderRect.x, renderRect.y);
+    if (this->currentDirection == Direction::UP && this->velocity.y != 0) {
+        this->spriteUp.render(renderer, renderRect.x, renderRect.y);
     }
 
-    if(currentDirection == Direction::DOWN && velocity.y != 0){
-        spriteDown.render(renderer, renderRect.x, renderRect.y);
+    if (this->currentDirection == Direction::DOWN && this->velocity.y != 0) {
+        this->spriteDown.render(renderer, renderRect.x, renderRect.y);
     }
 }
