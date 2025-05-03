@@ -17,6 +17,13 @@ private:
     SDL_Texture* warriorIdleRightTexture;
     SDL_Texture* warriorIdleDownTexture;
 
+    SDL_Texture* goblinRightTexture;
+    SDL_Texture* goblinUpTexture;
+    SDL_Texture* goblinDownTexture;
+    SDL_Texture* goblinIdleUpTexture;
+    SDL_Texture* goblinIdleRightTexture;
+    SDL_Texture* goblinIdleDownTexture;
+
     std::unique_ptr<GameWorld> world;
 public:
     GameManager();

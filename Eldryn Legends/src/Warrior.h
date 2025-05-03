@@ -7,6 +7,12 @@ class Warrior : public Entity{
 private:
     int swordDamage;
     bool idle = false;
+
+    SDL_Rect hitboxUp;
+    SDL_Rect hitboxDown;
+    SDL_Rect hitboxRight;
+    SDL_Rect hitboxLeft;
+
     AnimatedSprite spriteUp;
     AnimatedSprite spriteDown;
     AnimatedSprite spriteRight;
@@ -23,6 +29,7 @@ public:
     void update(float dt) override;
     void render(SDL_Renderer* renderer, const SDL_Rect& camera) override;
     void handleEvents(float dt, const Uint8* keys) override;
+    void updateHitbox(float dt);
     
     int getSwordDamage(){
         return this->swordDamage;

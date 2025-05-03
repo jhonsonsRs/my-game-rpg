@@ -135,3 +135,34 @@ void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera) {
         this->spriteDown.render(renderer, renderRect.x, renderRect.y);
     }
 }
+
+void Warrior::updateHitbox(float dt){
+    int hitboxSize = 16;
+    hitboxUp = {
+        rect.x,
+        rect.y - hitboxSize,
+        rect.w,
+        hitboxSize
+    };
+
+    hitboxDown = {
+        rect.x,
+        rect.y + rect.h,
+        rect.w,
+        hitboxSize
+    };
+
+    hitboxLeft = {
+        rect.x - hitboxSize,
+        rect.y,
+        hitboxSize,
+        rect.h
+    };
+
+    hitboxRight = {
+        rect.x + rect.w,
+        rect.y,
+        hitboxSize,
+        rect.h
+    };
+}

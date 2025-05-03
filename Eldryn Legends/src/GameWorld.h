@@ -22,12 +22,19 @@ private:
     Camera camera;
 public:
     GameWorld(SDL_Renderer* renderer, 
-        SDL_Texture* spriteAtlasRight, 
-        SDL_Texture* spriteAtlasUp, 
-        SDL_Texture* spriteAtlasDown, 
-        SDL_Texture* spriteAtlasRight2, 
-        SDL_Texture* spriteAtlasUp2, 
-        SDL_Texture* spriteAtlasDown2);
+        SDL_Texture* playerSpriteAtlasRight, 
+        SDL_Texture* playerSpriteAtlasUp, 
+        SDL_Texture* playerSpriteAtlasDown, 
+        SDL_Texture* playerSpriteAtlasRight2, 
+        SDL_Texture* playerSpriteAtlasUp2, 
+        SDL_Texture* playerSpriteAtlasDown2,
+
+        SDL_Texture* goblinSpriteAtlasRight, 
+        SDL_Texture* goblinSpriteAtlasUp, 
+        SDL_Texture* goblinSpriteAtlasDown, 
+        SDL_Texture* goblinSpriteAtlasRight2, 
+        SDL_Texture* goblinSpriteAtlasUp2, 
+        SDL_Texture* goblinSpriteAtlasDown2);
     ~GameWorld();
 
     void map();

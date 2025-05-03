@@ -48,6 +48,13 @@ bool GameManager::init(const char* title, int width, int height) {
     this->warriorIdleUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleUp.png");
     this->warriorIdleDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleDown.png");
 
+    this->goblinRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunRight.png");
+    this->goblinUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunUp.png");
+    this->goblinDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunDown.png");
+    this->goblinIdleRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleRight.png");
+    this->goblinIdleUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleUp.png");
+    this->goblinIdleDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleDown.png");
+
     if (!this->warriorRightTexture || !this->warriorUpTexture || !this->warriorDownTexture || !this->warriorIdleDownTexture || !this->warriorIdleRightTexture || !this->warriorIdleUpTexture) {
         std::cerr << "Erro ao carregar as spritesheets do jogador: " << IMG_GetError() << std::endl;
         return -1;
@@ -62,7 +69,14 @@ bool GameManager::init(const char* title, int width, int height) {
         this->warriorDownTexture,
         this->warriorIdleRightTexture,
         this->warriorIdleUpTexture,
-        this->warriorIdleDownTexture
+        this->warriorIdleDownTexture,
+
+        this->goblinRightTexture,
+        this->goblinUpTexture,
+        this->goblinDownTexture,
+        this->goblinIdleRightTexture,
+        this->goblinIdleUpTexture,
+        this->goblinIdleDownTexture
     );
     this->isRunning = true;
     return true;
@@ -111,6 +125,13 @@ void GameManager::clean() {
     SDL_DestroyTexture(this->warriorIdleDownTexture);
     SDL_DestroyTexture(this->warriorIdleUpTexture);
     SDL_DestroyTexture(this->warriorIdleRightTexture);
+
+    SDL_DestroyTexture(this->goblinRightTexture);
+    SDL_DestroyTexture(this->goblinUpTexture);
+    SDL_DestroyTexture(this->goblinDownTexture);
+    SDL_DestroyTexture(this->goblinIdleDownTexture);
+    SDL_DestroyTexture(this->goblinIdleUpTexture);
+    SDL_DestroyTexture(this->goblinIdleRightTexture);
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
     SDL_Quit();
