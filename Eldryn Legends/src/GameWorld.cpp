@@ -106,6 +106,9 @@ GameWorld::GameWorld(SDL_Renderer* renderer,
     SDL_Texture* playerSpriteAtlasRight2, 
     SDL_Texture* playerSpriteAtlasUp2, 
     SDL_Texture* playerSpriteAtlasDown2,
+    SDL_Texture* playerSpriteAtlasHitUp,
+    SDL_Texture* playerSpriteAtlasHitDown,
+    SDL_Texture* playerSpriteAtlasHitRight,
 
     SDL_Texture* goblinSpriteAtlasRight, 
     SDL_Texture* goblinSpriteAtlasUp, 
@@ -120,7 +123,10 @@ GameWorld::GameWorld(SDL_Renderer* renderer,
                                             playerSpriteAtlasDown, 
                                             playerSpriteAtlasRight2,
                                             playerSpriteAtlasUp2, 
-                                            playerSpriteAtlasDown2);
+                                            playerSpriteAtlasDown2,
+                                            playerSpriteAtlasHitUp,
+                                            playerSpriteAtlasHitDown,
+                                            playerSpriteAtlasHitRight);
 
     this->enemyGoblin = std::make_unique<Goblin>(BASE_WIDTH / 2, BASE_HEIGHT / 2,
                                                 goblinSpriteAtlasRight, 
@@ -128,7 +134,7 @@ GameWorld::GameWorld(SDL_Renderer* renderer,
                                                 goblinSpriteAtlasDown, 
                                                 goblinSpriteAtlasRight2, 
                                                 goblinSpriteAtlasUp2, 
-                                                goblinSpriteAtlasDown2);  // Alterado para Goblin
+                                                goblinSpriteAtlasDown2); 
     
     this->gameTerrain1 = std::make_unique<Map>(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain1, 16, MAP_WIDTH, MAP_WIDTH);
     this->gameTerrain2 = std::make_unique<Map>(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain2, 16, MAP_WIDTH, MAP_WIDTH);
@@ -146,15 +152,16 @@ GameWorld::~GameWorld(){
 void GameWorld::render(SDL_Renderer* renderer){
     this->gameTerrain1->render(renderer, this->camera.getView());
     this->gameTerrain2->render(renderer, this->camera.getView());
+    this->enemyGoblin->render(renderer, this->camera.getView());  
     this->player->render(renderer, this->camera.getView());
-    this->enemyGoblin->render(renderer, this->camera.getView());  // Alterado para Goblin
 }
 
-void GameWorld::update(float dt){
-    this->player->update(dt);
-    this->enemyGoblin->update(dt);  // Alterado para Goblin
+void GameWorld::update(float dt, const Uint8* keys){
+    this->enemyGoblin->update(dt, nullptr);  
+    this->player->update(dt, keys);
+    
 
-    Vector position_goblin = this->enemyGoblin->getPosition();  // Alterado para Goblin
+    Vector position_goblin = this->enemyGoblin->getPosition();  
     Vector position_player = this->player->getPosition();
 
     if(colision(position_goblin.x, position_goblin.y, GOBLIN_WIDTH, GOBLIN_HEIGHT, position_player.x, position_player.y, PLAYER_WIDTH, PLAYER_HEIGHT)){
@@ -168,6 +175,6 @@ void GameWorld::update(float dt){
         MAP_HEIGHT * 16);
 }
 
-void GameWorld::handleInput(float dt, const Uint8* keys){
-    this->player->handleEvents(dt, keys);
+void GameWorld::handleInput(const SDL_Event& event){
+    this->player->handleEvents(event);
 }

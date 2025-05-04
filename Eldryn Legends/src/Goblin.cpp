@@ -1,20 +1,29 @@
 #include <iostream>
 #include "Goblin.h"
 #include "GlobalProperties.h"
+#include "Hitbox.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <random>
 #include <cstdlib>
 #include <ctime>
 
-Goblin::Goblin(const int x, const int y, SDL_Texture* spriteAtlasRight, SDL_Texture* spriteAtlasUp, SDL_Texture* spriteAtlasDown, SDL_Texture* spriteAtlasRight2, SDL_Texture* spriteAtlasUp2, SDL_Texture* spriteAtlasDown2) :
+Goblin::Goblin(const int x, const int y, SDL_Texture* spriteAtlasRight, 
+    SDL_Texture* spriteAtlasUp, SDL_Texture* spriteAtlasDown, 
+    SDL_Texture* spriteAtlasRight2, 
+    SDL_Texture* spriteAtlasUp2, 
+    SDL_Texture* spriteAtlasDown2) :
     Entity(x, y, 30, 50, GOBLIN_WIDTH, GOBLIN_HEIGHT),
-    spriteRight(spriteAtlasRight, 16, 16, 4, 0.1f),
-    spriteUp(spriteAtlasUp, 16, 16, 4, 0.1f),
-    spriteDown(spriteAtlasDown, 16, 16, 4, 0.1f),
-    spriteIdleRight(spriteAtlasRight2, 16, 16, 2, 0.5f),
-    spriteIdleUp(spriteAtlasUp2, 16, 16, 2, 0.5f),
-    spriteIdleDown(spriteAtlasDown2, 16, 16, 2, 0.5f),
+    hitboxTop(0, 0, HITBOX_SIZE, HITBOX_SIZE),     
+    hitboxBottom(0, 0, HITBOX_SIZE, HITBOX_SIZE),  
+    hitboxRight(0, 0, HITBOX_SIZE, HITBOX_SIZE),   
+    hitboxLeft(0, 0, HITBOX_SIZE, HITBOX_SIZE), 
+    spriteRight(spriteAtlasRight, 16, 16, 4, 0.1f, true),
+    spriteUp(spriteAtlasUp, 16, 16, 4, 0.1f, true),
+    spriteDown(spriteAtlasDown, 16, 16, 4, 0.1f, true),
+    spriteIdleRight(spriteAtlasRight2, 16, 16, 2, 0.5f, true),
+    spriteIdleUp(spriteAtlasUp2, 16, 16, 2, 0.5f, true),
+    spriteIdleDown(spriteAtlasDown2, 16, 16, 2, 0.5f, true),
     currentDirection(Direction::RIGHT),
     lastDirection(Direction::RIGHT),
     goblinDamage(5) {
@@ -23,7 +32,7 @@ Goblin::Goblin(const int x, const int y, SDL_Texture* spriteAtlasRight, SDL_Text
 
 Goblin::~Goblin(){}
 
-void Goblin::handleEvents(float dt, const Uint8* keys){}
+void Goblin::handleEvents(const SDL_Event& event){}
 
 void Goblin::render(SDL_Renderer* renderer, const SDL_Rect& camera){
     SDL_Rect renderRect;
@@ -64,9 +73,14 @@ void Goblin::render(SDL_Renderer* renderer, const SDL_Rect& camera){
     if (this->currentDirection == Direction::DOWN && this->velocity.y != 0) {
         this->spriteDown.render(renderer, renderRect.x, renderRect.y);
     }
+
+    hitboxTop.render(renderer, camera);
+    hitboxBottom.render(renderer, camera);
+    hitboxRight.render(renderer, camera);
+    hitboxLeft.render(renderer, camera);
 }
 
-void Goblin::update(float dt){
+void Goblin::update(float dt, const Uint8* keys){
     this->decisionTimer -= dt;
 
     if(this->decisionTimer <= 0.0f){
@@ -145,4 +159,26 @@ void Goblin::update(float dt){
         this->spriteDown.update(dt);
         break;
     }
+
+    updateHitbox();
+}
+
+void Goblin::updateHitbox(){
+
+    hitboxTop.setHitboxPosition(position.x, position.y - (GOBLIN_HEIGHT + 2));
+    hitboxBottom.setHitboxPosition(position.x, position.y + (GOBLIN_HEIGHT + 2));
+    hitboxRight.setHitboxPosition(position.x + (GOBLIN_WIDTH + 2), position.y);
+    hitboxLeft.setHitboxPosition(position.x - (GOBLIN_WIDTH + 2), position.y);
+    
+}   
+
+void Goblin::takeDamage(int damage){
+    this->hp -= damage;
+    if(this->hp <= 0){
+        this->dead = true;
+    }
+}
+
+bool Goblin::isDead() const{
+    return this->dead;
 }

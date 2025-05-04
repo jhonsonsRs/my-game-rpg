@@ -16,6 +16,9 @@ private:
     SDL_Texture* warriorIdleUpTexture;
     SDL_Texture* warriorIdleRightTexture;
     SDL_Texture* warriorIdleDownTexture;
+    SDL_Texture* warriorHitUpTexture;
+    SDL_Texture* warriorHitDownTexture;
+    SDL_Texture* warriorHitRightTexture;
 
     SDL_Texture* goblinRightTexture;
     SDL_Texture* goblinUpTexture;

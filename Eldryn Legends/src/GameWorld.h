@@ -28,6 +28,9 @@ public:
         SDL_Texture* playerSpriteAtlasRight2, 
         SDL_Texture* playerSpriteAtlasUp2, 
         SDL_Texture* playerSpriteAtlasDown2,
+        SDL_Texture* playerSpriteAtlasHitUp,
+        SDL_Texture* playerSpriteAtlasHitDown,
+        SDL_Texture* playerSpriteAtlasHitRight,
 
         SDL_Texture* goblinSpriteAtlasRight, 
         SDL_Texture* goblinSpriteAtlasUp, 
@@ -39,6 +42,6 @@ public:
 
     void map();
     void render(SDL_Renderer* renderer);
-    void update(float dt);
-    void handleInput(float dt, const Uint8* keys);
+    void update(float dt, const Uint8* keys);
+    void handleInput(const SDL_Event& event);
 };

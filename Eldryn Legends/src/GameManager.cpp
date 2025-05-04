@@ -47,6 +47,9 @@ bool GameManager::init(const char* title, int width, int height) {
     this->warriorIdleRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleRight.png");
     this->warriorIdleUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleUp.png");
     this->warriorIdleDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleDown.png");
+    this->warriorHitUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitUp.png");
+    this->warriorHitDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitDown.png");
+    this->warriorHitRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitRight.png");
 
     this->goblinRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunRight.png");
     this->goblinUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunUp.png");
@@ -70,6 +73,9 @@ bool GameManager::init(const char* title, int width, int height) {
         this->warriorIdleRightTexture,
         this->warriorIdleUpTexture,
         this->warriorIdleDownTexture,
+        this->warriorHitUpTexture,
+        this->warriorHitDownTexture,
+        this->warriorHitRightTexture,
 
         this->goblinRightTexture,
         this->goblinUpTexture,
@@ -84,12 +90,13 @@ bool GameManager::init(const char* title, int width, int height) {
 
 void GameManager::run() {
     float previousTime = getTime();
+    const Uint8* keys = SDL_GetKeyboardState(NULL);
     while (this->isRunning) {
         float currentTime = getTime();
         float dt = currentTime - previousTime;
         previousTime = currentTime;
 
-        this->world->update(dt);
+        this->world->update(dt, keys);
         this->render(dt);
         this->handleEvents(dt);
         SDL_Delay(30);
@@ -102,10 +109,12 @@ void GameManager::handleEvents(float dt) {
         if (event.type == SDL_QUIT) {
             this->isRunning = false;
         }
+
+        this->world->handleInput(event);
     }
 
-    const Uint8* keys = SDL_GetKeyboardState(NULL);
-    this->world->handleInput(dt, keys);
+   
+
 }
 
 void GameManager::render(float dt) {
@@ -125,6 +134,9 @@ void GameManager::clean() {
     SDL_DestroyTexture(this->warriorIdleDownTexture);
     SDL_DestroyTexture(this->warriorIdleUpTexture);
     SDL_DestroyTexture(this->warriorIdleRightTexture);
+    SDL_DestroyTexture(this->warriorHitUpTexture);
+    SDL_DestroyTexture(this->warriorHitDownTexture);
+    SDL_DestroyTexture(this->warriorHitRightTexture);
 
     SDL_DestroyTexture(this->goblinRightTexture);
     SDL_DestroyTexture(this->goblinUpTexture);

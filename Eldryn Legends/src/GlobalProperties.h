@@ -10,6 +10,8 @@ inline constexpr int PLAYER_HEIGHT = 16;
 inline constexpr int GOBLIN_WIDTH = 16;
 inline constexpr int GOBLIN_HEIGHT = 16;
 
+inline constexpr int HITBOX_SIZE = 16;
+
 inline constexpr int BASE_WIDTH = SCREEN_WIDTH / 2;
 inline constexpr int BASE_HEIGHT = SCREEN_HEIGHT / 2;
 

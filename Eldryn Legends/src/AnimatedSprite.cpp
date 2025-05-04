@@ -2,9 +2,9 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
-AnimatedSprite::AnimatedSprite(SDL_Texture* spriteAtlas, int frameWidth, int frameHeight, int frameCount, float frameDuration)
+AnimatedSprite::AnimatedSprite(SDL_Texture* spriteAtlas, int frameWidth, int frameHeight, int frameCount, float frameDuration, bool loop)
     : spriteAtlas(spriteAtlas), frameWidth(frameWidth), frameHeight(frameHeight),
-      frameCount(frameCount), frameDuration(frameDuration), loop(true),
+      frameCount(frameCount), frameDuration(frameDuration), loop(loop),
       currentFrame(0), elapsedTime(0.0f)
 {
     for (int i = 0; i < this->frameCount; i++) {
@@ -39,4 +39,8 @@ void AnimatedSprite::render(SDL_Renderer* renderer, int x, int y, SDL_RendererFl
 void AnimatedSprite::reset(){
     this->currentFrame = 0;
     this->elapsedTime = 0.0f;
+}
+
+bool AnimatedSprite::isLastFrame() const {
+    return !loop && currentFrame == frameCount - 1;
 }

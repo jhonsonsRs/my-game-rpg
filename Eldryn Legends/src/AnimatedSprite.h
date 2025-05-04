@@ -14,10 +14,11 @@ private:
     float elapsedTime;
     std::vector<SDL_Rect> frames;
 public:
-    AnimatedSprite(SDL_Texture* spriteAtlas, int framWidth, int framHeight, int frameCount, float frameDuration);
+    AnimatedSprite(SDL_Texture* spriteAtlas, int framWidth, int framHeight, int frameCount, float frameDuration, bool loop);
     ~AnimatedSprite();
 
     void update(float dt);
     void render(SDL_Renderer* renderer, int x, int y, SDL_RendererFlip flip = SDL_FLIP_NONE);
     void reset();
+    bool isLastFrame() const;
 };
