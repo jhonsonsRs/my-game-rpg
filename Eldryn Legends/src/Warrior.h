@@ -16,6 +16,12 @@ private:
     Hitbox hitboxRight;
     Hitbox hitboxLeft;
 
+    bool hitboxTopActive = false;
+    bool hitboxBottomActive = false;
+    bool hitboxRightActive = false;
+    bool hitboxLeftActive = false;
+    bool alreadyHit = false;
+
     //Hit
     AnimatedSprite spriteHitUp;
     AnimatedSprite spriteHitDown;
@@ -49,7 +55,21 @@ public:
     void update(float dt, const Uint8* keys) override;
     void render(SDL_Renderer* renderer, const SDL_Rect& camera) override;
     void handleEvents(const SDL_Event& event) override;
+
+    void startAttack();
+    void stopAttack();    
+    bool isAttackingNow() const;
+    bool hasAlreadyHit() const;
+    void setAlreadyHit(bool value);
+
+    Hitbox* getActiveHitbox() const;
+    void activateAttackHitbox();
     void updateHitbox() override;
+
+    Hitbox* getHitboxTop();
+    Hitbox* getHitboxBottom();
+    Hitbox* getHitboxRight();
+    Hitbox* getHitboxLeft();
     
     int getSwordDamage(){
         return this->swordDamage;

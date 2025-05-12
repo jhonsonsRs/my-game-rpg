@@ -98,29 +98,29 @@ void Goblin::update(float dt, const Uint8* keys){
                 this->andar = true;
                 this->currentDirection = Direction::UP;
                 this->lastDirection = Direction::UP;
-                this->velocity.y = -this->speed;
+                this->velocity.y = -this->speed * (0.5f + (std::rand() % 100)/100.0f);
                 break;
             case 2:
                 this->andar = true;
                 this->currentDirection = Direction::DOWN;
                 this->lastDirection = Direction::DOWN;
-                this->velocity.y = this->speed;
+                 this->velocity.y = this->speed * (0.5f + (std::rand() % 100)/100.0f);
                 break;
             case 3:
                 this->andar = true;
                 this->currentDirection = Direction::RIGHT;
                 this->lastDirection = Direction::RIGHT;
-                this->velocity.x = this->speed;
+                this->velocity.x = this->speed * (0.5f + (std::rand() % 100)/100.0f); 
                 break;
             case 4:
                 this->andar = true;
                 this->currentDirection = Direction::LEFT;
                 this->lastDirection = Direction::LEFT;
-                this->velocity.x = -this->speed;
+                 this->velocity.x = -this->speed * (0.5f + (std::rand() % 100)/100.0f);
                 break;
         }
 
-        this->decisionTimer = 5.0f;
+        this->decisionTimer = 2.0f;
     }
 
     if(this->andar){
@@ -181,4 +181,12 @@ void Goblin::takeDamage(int damage){
 
 bool Goblin::isDead() const{
     return this->dead;
+}
+
+SDL_Rect& Goblin::getRect() {
+    return rect; // Supondo que você tenha um membro SDL_Rect rect;
+}
+
+const SDL_Rect& Goblin::getRect() const {
+    return rect;
 }

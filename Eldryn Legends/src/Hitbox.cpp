@@ -16,6 +16,7 @@ void Hitbox::render(SDL_Renderer* renderer, const SDL_Rect& camera){
     renderRect.h = this->rect.h;
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 100); 
     SDL_RenderDrawRect(renderer, &renderRect);
+    SDL_RenderFillRect(renderer, &renderRect);
 }
 
 void Hitbox::setHitboxPosition(int newX, int newY){
@@ -23,6 +24,22 @@ void Hitbox::setHitboxPosition(int newX, int newY){
     position.y = newY;    
     rect.x = static_cast<int>(position.x);
     rect.y = static_cast<int>(position.y);
+}
+
+void Hitbox::setActive(bool isActive){
+    active = isActive;
+}
+
+bool Hitbox::isActive() const {
+    return active;
+}
+
+SDL_Rect& Hitbox::getRect() {
+    return rect; // Supondo que você tenha um membro SDL_Rect rect;
+}
+
+const SDL_Rect& Hitbox::getRect() const {
+    return rect;
 }
 
 Hitbox::~Hitbox(){}

@@ -36,6 +36,9 @@ public:
     void takeDamage(int damage);
     bool isDead() const;
 
+    SDL_Rect& getRect();
+    const SDL_Rect& getRect() const;
+
     int getGoblinDamage(){
         return this->goblinDamage;
     }

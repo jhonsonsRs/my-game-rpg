@@ -47,6 +47,23 @@ void Warrior::handleEvents(const SDL_Event& event) {
             spriteHitUp.reset();
             spriteHitDown.reset();
             spriteHitRight.reset();
+
+            hitboxTopActive = false;
+            hitboxBottomActive = false;
+            hitboxRightActive = false;
+            hitboxLeftActive = false;
+
+            activateAttackHitbox();
+
+            if(lastDirection == Direction::RIGHT){
+                hitboxRightActive = true;
+            } else if(lastDirection == Direction::LEFT){
+                hitboxLeftActive = true;
+            } else if(lastDirection == Direction::UP){
+                hitboxTopActive = true;
+            } else if(lastDirection == Direction::DOWN){
+                hitboxBottomActive = true;
+            }
         }
     }
 }
@@ -101,6 +118,8 @@ void Warrior::update(float dt, const Uint8* keys) {
             this->spriteHitUp.update(dt);
             if(this->spriteHitUp.isLastFrame()){
                 isAttacking = false;    
+                alreadyHit = false;
+                hitboxTopActive = false;
             }
         }
 
@@ -108,6 +127,8 @@ void Warrior::update(float dt, const Uint8* keys) {
             this->spriteHitDown.update(dt);
             if(this->spriteHitDown.isLastFrame()){
                 isAttacking = false;
+                alreadyHit = false;
+                hitboxBottomActive = false;
             }
         }
 
@@ -115,6 +136,8 @@ void Warrior::update(float dt, const Uint8* keys) {
             this->spriteHitRight.update(dt);
             if(this->spriteHitRight.isLastFrame()){
                 isAttacking = false;
+                alreadyHit = false;
+                hitboxRightActive = false;
             }
         }
 
@@ -122,6 +145,8 @@ void Warrior::update(float dt, const Uint8* keys) {
             this->spriteHitRight.update(dt);
             if(this->spriteHitRight.isLastFrame()){
                 isAttacking = false;
+                alreadyHit = false;
+                hitboxLeftActive = false;
             }
         }
     }
@@ -186,7 +211,7 @@ void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera) {
 
         if(this->lastDirection == Direction::LEFT){
             this->spriteHitRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
-        }
+        } 
     } else {
         // A sprite do player parado só vai ser desenhada se o x ou y da velocidade for 0
         if (this->currentDirection == Direction::UP && this->velocity.y == 0) {
@@ -224,10 +249,34 @@ void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera) {
             this->spriteDown.render(renderer, renderRect.x, renderRect.y);
         }
     }
-    hitboxTop.render(renderer, camera);
-    hitboxBottom.render(renderer, camera);
-    hitboxRight.render(renderer, camera);
-    hitboxLeft.render(renderer, camera);
+
+   /* if(hitboxTopActive)hitboxTop.render(renderer, camera);
+    if(hitboxBottomActive)hitboxBottom.render(renderer, camera);
+    if(hitboxRightActive)hitboxRight.render(renderer, camera);
+    if(hitboxLeftActive)hitboxLeft.render(renderer, camera);*/
+    
+}
+
+void Warrior::activateAttackHitbox(){
+    hitboxTop.setActive(false);
+    hitboxBottom.setActive(false);
+    hitboxLeft.setActive(false);
+    hitboxRight.setActive(false);
+
+    switch (lastDirection) {
+        case Direction::UP:
+            hitboxTop.setActive(true);
+            break;
+        case Direction::DOWN:
+            hitboxBottom.setActive(true);
+            break;
+        case Direction::LEFT:
+            hitboxLeft.setActive(true);
+            break;
+        case Direction::RIGHT:
+            hitboxRight.setActive(true);
+            break;
+    }
 }
 
 void Warrior::updateHitbox(){
@@ -238,3 +287,50 @@ void Warrior::updateHitbox(){
     hitboxLeft.setHitboxPosition(position.x - (PLAYER_WIDTH + 2), position.y);
     
 }   
+
+Hitbox* Warrior::getHitboxTop() {
+    return &hitboxTop;
+}
+
+Hitbox* Warrior::getHitboxBottom() {
+    return &hitboxBottom;
+}
+
+Hitbox* Warrior::getHitboxRight() {
+    return &hitboxRight;
+}
+
+Hitbox* Warrior::getHitboxLeft() {
+    return &hitboxLeft;
+}
+
+
+
+void Warrior::startAttack() {
+    isAttacking = true;
+}
+
+void Warrior::stopAttack() {
+    isAttacking = false;
+    alreadyHit = false;
+}
+
+bool Warrior::isAttackingNow() const {
+    return isAttacking;
+}
+
+bool Warrior::hasAlreadyHit() const {
+    return alreadyHit;
+}
+
+void Warrior::setAlreadyHit(bool value) {
+    alreadyHit = value;
+}
+
+Hitbox* Warrior::getActiveHitbox() const {
+    if (hitboxTopActive) return const_cast<Hitbox*>(&hitboxTop);
+    if (hitboxBottomActive) return const_cast<Hitbox*>(&hitboxBottom);
+    if (hitboxRightActive) return const_cast<Hitbox*>(&hitboxRight);
+    if (hitboxLeftActive) return const_cast<Hitbox*>(&hitboxLeft);
+    return nullptr;
+}

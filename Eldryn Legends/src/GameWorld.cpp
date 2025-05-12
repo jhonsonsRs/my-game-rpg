@@ -152,20 +152,47 @@ GameWorld::~GameWorld(){
 void GameWorld::render(SDL_Renderer* renderer){
     this->gameTerrain1->render(renderer, this->camera.getView());
     this->gameTerrain2->render(renderer, this->camera.getView());
-    this->enemyGoblin->render(renderer, this->camera.getView());  
+    
+    // Renderiza o goblin apenas se ele existir
+    if (this->enemyGoblin) {
+        this->enemyGoblin->render(renderer, this->camera.getView());
+    }
+    
     this->player->render(renderer, this->camera.getView());
 }
 
-void GameWorld::update(float dt, const Uint8* keys){
-    this->enemyGoblin->update(dt, nullptr);  
+void GameWorld::update(float dt, const Uint8* keys) {
     this->player->update(dt, keys);
     
-
-    Vector position_goblin = this->enemyGoblin->getPosition();  
     Vector position_player = this->player->getPosition();
 
-    if(colision(position_goblin.x, position_goblin.y, GOBLIN_WIDTH, GOBLIN_HEIGHT, position_player.x, position_player.y, PLAYER_WIDTH, PLAYER_HEIGHT)){
-        std::cout << "tocou" << std::endl;
+    if (this->enemyGoblin) {
+        if (!this->enemyGoblin->isDead()) {
+            Vector position_goblin = this->enemyGoblin->getPosition();
+            
+            if (player->isAttackingNow()) {
+                Hitbox* activeHitbox = nullptr;
+
+                if (player->getHitboxTop()->isActive()) activeHitbox = player->getHitboxTop();
+                else if (player->getHitboxBottom()->isActive()) activeHitbox = player->getHitboxBottom();
+                else if (player->getHitboxRight()->isActive()) activeHitbox = player->getHitboxRight();
+                else if (player->getHitboxLeft()->isActive()) activeHitbox = player->getHitboxLeft();
+
+                if (activeHitbox && !player->hasAlreadyHit()) {
+                    if (SDL_HasIntersection(&activeHitbox->getRect(), &enemyGoblin->getRect())) {
+                        enemyGoblin->takeDamage(player->getSwordDamage());
+                        player->setAlreadyHit(true);
+                    }
+                }
+
+                this->enemyGoblin->update(dt, nullptr);
+            } else {
+                this->enemyGoblin->update(dt, nullptr);
+            }
+        } else {
+            // Goblin morreu - adicione efeitos antes de remover se quiser
+            enemyGoblin.reset();
+        }
     }
 
     this->camera.update(
