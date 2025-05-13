@@ -1,8 +1,10 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <memory>
+#include "TextureManager.h"
 
 class GameWorld;
+class TextureManager;
 
 class GameManager{
 private:
@@ -10,22 +12,7 @@ private:
     SDL_Renderer* renderer;
     bool isRunning;
 
-    SDL_Texture* warriorRightTexture;
-    SDL_Texture* warriorUpTexture;
-    SDL_Texture* warriorDownTexture;
-    SDL_Texture* warriorIdleUpTexture;
-    SDL_Texture* warriorIdleRightTexture;
-    SDL_Texture* warriorIdleDownTexture;
-    SDL_Texture* warriorHitUpTexture;
-    SDL_Texture* warriorHitDownTexture;
-    SDL_Texture* warriorHitRightTexture;
-
-    SDL_Texture* goblinRightTexture;
-    SDL_Texture* goblinUpTexture;
-    SDL_Texture* goblinDownTexture;
-    SDL_Texture* goblinIdleUpTexture;
-    SDL_Texture* goblinIdleRightTexture;
-    SDL_Texture* goblinIdleDownTexture;
+    TextureManager textureManager;
 
     std::unique_ptr<GameWorld> world;
 public:
