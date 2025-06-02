@@ -7,6 +7,8 @@
 #include <memory>
 #include <iostream>
 #include <SDL2/SDL_image.h>
+#include <cmath>
+#define _USE_MATH_DEFINES
 #include "C:\Games\Eldryn Legends\math-vector.h"
 using Vector = Mylib::Math::Vector<float, 2>;
 
@@ -99,37 +101,52 @@ void GameWorld::map(){
     }
 }
 
-GameWorld::GameWorld(SDL_Renderer* renderer, TextureManager& textureManager) : camera() {
+GameWorld::GameWorld(SDL_Renderer* renderer, 
+    SDL_Texture* playerSpriteAtlasRight, 
+    SDL_Texture* playerSpriteAtlasUp, 
+    SDL_Texture* playerSpriteAtlasDown, 
+    SDL_Texture* playerSpriteAtlasRight2, 
+    SDL_Texture* playerSpriteAtlasUp2, 
+    SDL_Texture* playerSpriteAtlasDown2,
+    SDL_Texture* playerSpriteAtlasHitUp,
+    SDL_Texture* playerSpriteAtlasHitDown,
+    SDL_Texture* playerSpriteAtlasHitRight,
+
+    SDL_Texture* goblinSpriteAtlasRight, 
+    SDL_Texture* goblinSpriteAtlasUp, 
+    SDL_Texture* goblinSpriteAtlasDown, 
+    SDL_Texture* goblinSpriteAtlasRight2, 
+    SDL_Texture* goblinSpriteAtlasUp2, 
+    SDL_Texture* goblinSpriteAtlasDown2,
+    SDL_Texture* goblinSpriteAtlasHitUp,
+    SDL_Texture* goblinSpriteAtlasHitDown,
+    SDL_Texture* goblinSpriteAtlasHitRight
+) : camera() {
     this->map();
     this->player = std::make_unique<Warrior>(BASE_WIDTH / 2, BASE_HEIGHT / 2, 
-                        textureManager.get("warrior_run_right"),
-                        textureManager.get("warrior_run_up"),
-                        textureManager.get("warrior_run_down"),
-                        textureManager.get("warrior_idle_right"),
-                        textureManager.get("warrior_idle_up"),
-                        textureManager.get("warrior_idle_down"),
-                        textureManager.get("warrior_hit_right"),
-                        textureManager.get("warrior_hit_up"),
-                        textureManager.get("warrior_hit_down"));
+                                            playerSpriteAtlasRight, 
+                                            playerSpriteAtlasUp, 
+                                            playerSpriteAtlasDown, 
+                                            playerSpriteAtlasRight2,
+                                            playerSpriteAtlasUp2, 
+                                            playerSpriteAtlasDown2,
+                                            playerSpriteAtlasHitUp,
+                                            playerSpriteAtlasHitDown,
+                                            playerSpriteAtlasHitRight);
 
-
-
-                                            
-    for(int i = 0; i < 3; i++){
-        this->enemyGoblins.push_back(std::make_unique<Goblin>(BASE_WIDTH / 2, BASE_HEIGHT / 2,
-                        textureManager.get("goblin_run_right"),
-                        textureManager.get("goblin_run_up"),
-                        textureManager.get("goblin_run_down"),
-                        textureManager.get("goblin_idle_right"),
-                        textureManager.get("goblin_idle_up"),
-                        textureManager.get("goblin_idle_down"),
-                        textureManager.get("goblin_hit_right"),
-                        textureManager.get("goblin_hit_up"),
-                        textureManager.get("goblin_hit_down")));  
-    }                           
+    this->enemyGoblin = std::make_unique<Goblin>(BASE_WIDTH / 2, BASE_HEIGHT / 2,
+                                                goblinSpriteAtlasRight, 
+                                                goblinSpriteAtlasUp,
+                                                goblinSpriteAtlasDown, 
+                                                goblinSpriteAtlasRight2, 
+                                                goblinSpriteAtlasUp2, 
+                                                goblinSpriteAtlasDown2,
+                                                goblinSpriteAtlasHitUp,
+                                                goblinSpriteAtlasHitDown,
+                                                goblinSpriteAtlasHitRight); 
     
-    this->gameTerrain1 = std::make_unique<Map>(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain1, 16, MAP_WIDTH, MAP_WIDTH);
-    this->gameTerrain2 = std::make_unique<Map>(renderer, "C:/Users/Usuario/OneDrive/Área de Trabalho/Jogo C++/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain2, 16, MAP_WIDTH, MAP_WIDTH);
+    this->gameTerrain1 = std::make_unique<Map>(renderer, "C:/Games/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain1, 16, MAP_WIDTH, MAP_WIDTH);
+    this->gameTerrain2 = std::make_unique<Map>(renderer, "C:/Games/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain2, 16, MAP_WIDTH, MAP_WIDTH);
 }
 
 GameWorld::~GameWorld(){
@@ -146,64 +163,69 @@ void GameWorld::render(SDL_Renderer* renderer){
     this->gameTerrain2->render(renderer, this->camera.getView());
     
     // Renderiza o goblin apenas se ele existir
-    for(auto& goblin : enemyGoblins){
-        if (goblin) {
-                goblin->render(renderer, this->camera.getView());
-            }
+    if (this->enemyGoblin) {
+        this->enemyGoblin->render(renderer, this->camera.getView());
     }
-    
     
     this->player->render(renderer, this->camera.getView());
 }
 
 void GameWorld::update(float dt, const Uint8* keys) {
     this->player->update(dt, keys);
-    
     Vector position_player = this->player->getPosition();
 
-    for(auto it = enemyGoblins.begin(); it != enemyGoblins.end(); ){
-        if (!enemyGoblins.empty()) {
-            std::unique_ptr<Goblin>& goblin = *it;
-
-            if (!goblin->isDead()) {
-                Vector position_goblin = goblin->getPosition();
-                
-                if (player->isAttackingNow()) {
-                    Hitbox* activeHitbox = nullptr;
-
-                    if (player->getHitboxTop()->isActive()) activeHitbox = player->getHitboxTop();
-                    else if (player->getHitboxBottom()->isActive()) activeHitbox = player->getHitboxBottom();
-                    else if (player->getHitboxRight()->isActive()) activeHitbox = player->getHitboxRight();
-                    else if (player->getHitboxLeft()->isActive()) activeHitbox = player->getHitboxLeft();
-
-                    if (activeHitbox && !player->hasAlreadyHit()) {
-                        if (SDL_HasIntersection(&activeHitbox->getRect(), &goblin->getRect())) {
-                            goblin->takeDamage(player->getSwordDamage());
-                            player->setAlreadyHit(true);
-                        }
+    if (this->enemyGoblin) {
+        if (!this->enemyGoblin->isDead()) {
+            // Verifica ataque do jogador (mantido igual)
+            if (player->isAttackingNow()) {
+                Hitbox* activeHitbox = player->getActiveHitbox();
+                if (activeHitbox && !player->hasAlreadyHit()) {
+                    if (SDL_HasIntersection(&activeHitbox->getRect(), &enemyGoblin->getRect())) {
+                        enemyGoblin->takeDamage(player->getSwordDamage());
+                        player->setAlreadyHit(true);
                     }
-
-                    goblin->update(dt, nullptr);
-                } else {
-                    goblin->update(dt, nullptr);
                 }
-
-                it++;
-            } else {
-                // Goblin morreu - adicione efeitos antes de remover se quiser
-                it = enemyGoblins.erase(it);
             }
+
+            // Verifica colisão e determina direção do ataque (SIMPLIFICADO)
+            if (SDL_HasIntersection(&player->getRect(), &enemyGoblin->getRect())) {
+                SDL_Rect pRect = player->getRect();
+                SDL_Rect gRect = enemyGoblin->getRect();
+                
+                // Calcula qual lado está mais próximo (sem ângulos)
+                bool fromTop = (pRect.y + pRect.h) < gRect.y + (gRect.h/3);
+                bool fromBottom = pRect.y > gRect.y + (2*gRect.h/3);
+                bool fromLeft = (pRect.x + pRect.w) < gRect.x + (gRect.w/3);
+                bool fromRight = pRect.x > gRect.x + (2*gRect.w/3);
+
+                // Determina direção do ataque
+                if (fromTop) enemyGoblin->activateAttack(Goblin::Direction::UP);
+                else if (fromBottom) enemyGoblin->activateAttack(Goblin::Direction::DOWN);
+                else if (fromLeft) enemyGoblin->activateAttack(Goblin::Direction::LEFT);
+                else if (fromRight) enemyGoblin->activateAttack(Goblin::Direction::RIGHT);
+                else enemyGoblin->activateAttack(Goblin::Direction::DOWN); // padrão se não for óbvio
+            }
+
+            // Verifica dano (mantido igual)
+            if (enemyGoblin->isAttacking()) {
+                Hitbox* goblinHitbox = enemyGoblin->getAttackHitbox();
+                if (goblinHitbox && SDL_HasIntersection(&goblinHitbox->getRect(), &player->getRect())) {
+                    player->takeDamage(enemyGoblin->getGoblinDamage());
+                }
+            }
+            
+            this->enemyGoblin->update(dt, nullptr);
         } else {
-            break;
+            enemyGoblin.reset();
         }
     }
+
     this->camera.update(
         position_player.x, 
         position_player.y, 
         MAP_WIDTH * 16, 
         MAP_HEIGHT * 16);
 }
-
 void GameWorld::handleInput(const SDL_Event& event){
     this->player->handleEvents(event);
 }

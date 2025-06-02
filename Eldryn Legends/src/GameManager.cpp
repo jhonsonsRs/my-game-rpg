@@ -1,6 +1,5 @@
 #include "GameManager.h"
 #include "GameWorld.h"
-#include "TextureManager.h"
 #include "GlobalProperties.h"
 #include <iostream>
 #include <SDL2/SDL_image.h>
@@ -16,7 +15,7 @@ GameManager::GameManager() : window(nullptr), renderer(nullptr), isRunning(false
 bool GameManager::init(const char* title, int width, int height) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cerr << "Erro ao inicializar o SDL2: " << SDL_GetError() << std::endl;
-        return -1;
+        return false;
     }
 
     this->window = SDL_CreateWindow(title,
@@ -25,67 +24,71 @@ bool GameManager::init(const char* title, int width, int height) {
         width, height,
         SDL_WINDOW_SHOWN);
 
-    // Tela cheia
     SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 
     if (!this->window) {
         std::cerr << "Erro ao criar a janela: " << SDL_GetError() << std::endl;
         SDL_Quit();
-        return -1;
+        return false;
     }
 
     this->renderer = SDL_CreateRenderer(this->window, -1, SDL_RENDERER_ACCELERATED);
     if (!this->renderer) {
         std::cerr << "Erro ao criar o renderer: " << SDL_GetError() << std::endl;
-        SDL_DestroyRenderer(this->renderer);
+        SDL_DestroyWindow(this->window);
         SDL_Quit();
         return false;
     }
 
-    textureManager.load("warrior_run_right", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerRunRight.png");
-    textureManager.load("warrior_run_up", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerRunUp.png");
-    textureManager.load("warrior_run_down", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerRunDown.png");
-    textureManager.load("warrior_idle_right", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleRight.png");
-    textureManager.load("warrior_idle_up", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleUp.png");
-    textureManager.load("warrior_idle_down", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleDown.png");
-    textureManager.load("warrior_hit_right", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitRight.png");
-    textureManager.load("warrior_hit_up", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitUp.png");
-    textureManager.load("warrior_hit_down", renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitDown.png");
+    this->warriorRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerRunRight.png");
+    this->warriorUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerRunUp.png");
+    this->warriorDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerRunDown.png");
+    this->warriorIdleRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleRight.png");
+    this->warriorIdleUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleUp.png");
+    this->warriorIdleDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerIdleDown.png");
+    this->warriorHitUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitUp.png");
+    this->warriorHitDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitDown.png");
+    this->warriorHitRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/playerHitRight.png");
 
-    textureManager.load("goblin_run_right", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunRight.png");
-    textureManager.load("goblin_run_up", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunUp.png");
-    textureManager.load("goblin_run_down", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunDown.png");
-    textureManager.load("goblin_idle_right", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleRight.png");
-    textureManager.load("goblin_idle_up", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleUp.png");
-    textureManager.load("goblin_idle_down", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleDown.png");
-    textureManager.load("goblin_hit_right", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitRight.png");
-    textureManager.load("goblin_hit_up", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitUp.png");
-    textureManager.load("goblin_hit_down", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitDown.png");
+    this->goblinRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunRight.png");
+    this->goblinUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunUp.png");
+    this->goblinDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinRunDown.png");
+    this->goblinIdleRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleRight.png");
+    this->goblinIdleUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleUp.png");
+    this->goblinIdleDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinIdleDown.png");
+    this->goblinHitUpTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitUp.png");
+    this->goblinHitDownTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitDown.png");
+    this->goblinHitRightTexture = IMG_LoadTexture(this->renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitRight.png");
 
+    if (!this->warriorRightTexture || !this->warriorUpTexture || !this->warriorDownTexture || 
+        !this->warriorIdleDownTexture || !this->warriorIdleRightTexture || !this->warriorIdleUpTexture) {
+        std::cerr << "Erro ao carregar as spritesheets do jogador: " << IMG_GetError() << std::endl;
+        return false;
+    }
 
     SDL_RenderSetLogicalSize(this->renderer, BASE_WIDTH, BASE_HEIGHT);
 
     this->world = std::make_unique<GameWorld>(
         this->renderer,
-        textureManager.get("warrior_run_right"),
-        textureManager.get("warrior_run_up"),
-        textureManager.get("warrior_run_down"),
-        textureManager.get("warrior_idle_right"),
-        textureManager.get("warrior_idle_up"),
-        textureManager.get("warrior_idle_down"),
-        textureManager.get("warrior_hit_right"),
-        textureManager.get("warrior_hit_up"),
-        textureManager.get("warrior_hit_down"),
+        this->warriorRightTexture,
+        this->warriorUpTexture,
+        this->warriorDownTexture,
+        this->warriorIdleRightTexture,
+        this->warriorIdleUpTexture,
+        this->warriorIdleDownTexture,
+        this->warriorHitUpTexture,
+        this->warriorHitDownTexture,
+        this->warriorHitRightTexture,
 
-        textureManager.get("goblin_run_right"),
-        textureManager.get("goblin_run_up"),
-        textureManager.get("goblin_run_down"),
-        textureManager.get("goblin_idle_right"),
-        textureManager.get("goblin_idle_up"),
-        textureManager.get("goblin_idle_down"),
-        textureManager.get("goblin_hit_right"),
-        textureManager.get("goblin_hit_up"),
-        textureManager.get("goblin_hit_down")
+        this->goblinRightTexture,
+        this->goblinUpTexture,
+        this->goblinDownTexture,
+        this->goblinIdleRightTexture,
+        this->goblinIdleUpTexture,
+        this->goblinIdleDownTexture,
+        this->goblinHitUpTexture,
+        this->goblinHitDownTexture,
+        this->goblinHitRightTexture
     );
     this->isRunning = true;
     return true;
@@ -112,26 +115,38 @@ void GameManager::handleEvents(float dt) {
         if (event.type == SDL_QUIT) {
             this->isRunning = false;
         }
-
         this->world->handleInput(event);
     }
-
-   
-
 }
 
 void GameManager::render(float dt) {
     SDL_SetRenderDrawColor(this->renderer, 30, 30, 30, 255);
     SDL_RenderClear(this->renderer);
-
     this->world->render(this->renderer);
-
     SDL_RenderPresent(this->renderer);
 }
 
 void GameManager::clean() {
     this->world.reset();
-    textureManager.clean();
+    SDL_DestroyTexture(this->warriorRightTexture);
+    SDL_DestroyTexture(this->warriorUpTexture);
+    SDL_DestroyTexture(this->warriorDownTexture);
+    SDL_DestroyTexture(this->warriorIdleDownTexture);
+    SDL_DestroyTexture(this->warriorIdleUpTexture);
+    SDL_DestroyTexture(this->warriorIdleRightTexture);
+    SDL_DestroyTexture(this->warriorHitUpTexture);
+    SDL_DestroyTexture(this->warriorHitDownTexture);
+    SDL_DestroyTexture(this->warriorHitRightTexture);
+
+    SDL_DestroyTexture(this->goblinRightTexture);
+    SDL_DestroyTexture(this->goblinUpTexture);
+    SDL_DestroyTexture(this->goblinDownTexture);
+    SDL_DestroyTexture(this->goblinIdleDownTexture);
+    SDL_DestroyTexture(this->goblinIdleUpTexture);
+    SDL_DestroyTexture(this->goblinIdleRightTexture);
+    SDL_DestroyTexture(this->goblinHitDownTexture);
+    SDL_DestroyTexture(this->goblinHitUpTexture);
+    SDL_DestroyTexture(this->goblinHitRightTexture);
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
     SDL_Quit();

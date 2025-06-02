@@ -33,6 +33,8 @@ Warrior::Warrior(const int x, const int y, SDL_Texture* spriteAtlasRight,
     spriteHitRight(spriteAtlasHitRight, 16, 16, 4, 0.1f, false),
     currentDirection(Direction::RIGHT),
     lastDirection(Direction::RIGHT),
+    invencible(false),
+    invencibilityTimer(0.0f),
     swordDamage(20) {}
 
 Warrior::~Warrior() {
@@ -43,35 +45,42 @@ void Warrior::handleEvents(const SDL_Event& event) {
         int mouseX = event.button.x;
         int mouseY = event.button.y;
         if(event.button.button == SDL_BUTTON_LEFT || event.button.button == SDL_BUTTON_RIGHT ){
-            isAttacking = true;
-            spriteHitUp.reset();
-            spriteHitDown.reset();
-            spriteHitRight.reset();
+            this->isAttacking = true;
+            this->spriteHitUp.reset();
+            this->spriteHitDown.reset();
+            this->spriteHitRight.reset();
 
-            hitboxTopActive = false;
-            hitboxBottomActive = false;
-            hitboxRightActive = false;
-            hitboxLeftActive = false;
+            this->hitboxTopActive = false;
+            this->hitboxBottomActive = false;
+            this->hitboxRightActive = false;
+            this->hitboxLeftActive = false;
 
-            activateAttackHitbox();
+            this->activateAttackHitbox();
 
-            if(lastDirection == Direction::RIGHT){
-                hitboxRightActive = true;
-            } else if(lastDirection == Direction::LEFT){
-                hitboxLeftActive = true;
-            } else if(lastDirection == Direction::UP){
-                hitboxTopActive = true;
-            } else if(lastDirection == Direction::DOWN){
-                hitboxBottomActive = true;
+            if(this->lastDirection == Direction::RIGHT){
+                this->hitboxRightActive = true;
+            } else if(this->lastDirection == Direction::LEFT){
+                this->hitboxLeftActive = true;
+            } else if(this->lastDirection == Direction::UP){
+                this->hitboxTopActive = true;
+            } else if(this->lastDirection == Direction::DOWN){
+                this->hitboxBottomActive = true;
             }
         }
     }
 }
 
 void Warrior::update(float dt, const Uint8* keys) {
-    if(isAttacking){
-        velocity.x = 0;
-        velocity.y = 0;
+    if(this->invencible){
+        this->invencibilityTimer += dt;
+        if(this->invencibilityTimer >= INVINCIBILITY_DURATION){
+            this->invencible = false;
+        }
+    }
+
+    if(this->isAttacking){
+        this->velocity.x = 0;
+        this->velocity.y = 0;
     } else {
         if (keys[SDL_SCANCODE_W]) {
             this->velocity.y = -this->speed; 
@@ -104,55 +113,48 @@ void Warrior::update(float dt, const Uint8* keys) {
     if (this->velocity.x == 0 || this->velocity.y == 0) {
         this->idle = true;
     } else {
-        idle = false;
+        this->idle = false;
     }
 
     this->position += this->velocity * dt;
     this->rect.x = static_cast<int>(this->position.x);
     this->rect.y = static_cast<int>(this->position.y);
 
-
-    if(isAttacking){
-        //UPDATE HIT
+    if(this->isAttacking){
         if(this->lastDirection == Direction::UP){
             this->spriteHitUp.update(dt);
             if(this->spriteHitUp.isLastFrame()){
-                isAttacking = false;    
-                alreadyHit = false;
-                hitboxTopActive = false;
+                this->isAttacking = false;    
+                this->alreadyHit = false;
+                this->hitboxTopActive = false;
             }
         }
-
         else if(this->lastDirection == Direction::DOWN){
             this->spriteHitDown.update(dt);
             if(this->spriteHitDown.isLastFrame()){
-                isAttacking = false;
-                alreadyHit = false;
-                hitboxBottomActive = false;
+                this->isAttacking = false;
+                this->alreadyHit = false;
+                this->hitboxBottomActive = false;
             }
         }
-
         else if(this->lastDirection == Direction::RIGHT){
             this->spriteHitRight.update(dt);
             if(this->spriteHitRight.isLastFrame()){
-                isAttacking = false;
-                alreadyHit = false;
-                hitboxRightActive = false;
+                this->isAttacking = false;
+                this->alreadyHit = false;
+                this->hitboxRightActive = false;
             }
         }
-
         else if(this->lastDirection == Direction::LEFT){
             this->spriteHitRight.update(dt);
             if(this->spriteHitRight.isLastFrame()){
-                isAttacking = false;
-                alreadyHit = false;
-                hitboxLeftActive = false;
+                this->isAttacking = false;
+                this->alreadyHit = false;
+                this->hitboxLeftActive = false;
             }
         }
     }
-    
 
-    //UPDATE IDLE
     if (this->currentDirection == Direction::UP && this->velocity.y == 0) {
         this->spriteIdleUp.update(dt);
     }
@@ -169,7 +171,6 @@ void Warrior::update(float dt, const Uint8* keys) {
         this->spriteIdleRight.update(dt);
     }
 
-    //UPDATE RUN
     switch (this->currentDirection) {
     case Direction::RIGHT:
         this->spriteRight.update(dt);
@@ -185,7 +186,7 @@ void Warrior::update(float dt, const Uint8* keys) {
         break;
     }
 
-    updateHitbox();
+    this->updateHitbox();
 }
 
 void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera) {
@@ -195,142 +196,145 @@ void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera) {
     renderRect.w = this->rect.w;
     renderRect.h = this->rect.h;
 
-    if(isAttacking){
-        //RENDER SPRITE HIT
+    if(this->isAttacking){
         if(this->lastDirection == Direction::UP){
             this->spriteHitUp.render(renderer, renderRect.x, renderRect.y);
         }
-
         if(this->lastDirection == Direction::DOWN){
             this->spriteHitDown.render(renderer, renderRect.x, renderRect.y);
         }
-
         if(this->lastDirection == Direction::RIGHT){
             this->spriteHitRight.render(renderer, renderRect.x, renderRect.y);
         }
-
         if(this->lastDirection == Direction::LEFT){
             this->spriteHitRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
         } 
     } else {
-        // A sprite do player parado só vai ser desenhada se o x ou y da velocidade for 0
         if (this->currentDirection == Direction::UP && this->velocity.y == 0) {
             this->spriteIdleUp.render(renderer, renderRect.x, renderRect.y);
         }
-
         if (this->currentDirection == Direction::DOWN && this->velocity.y == 0) {
             this->spriteIdleDown.render(renderer, renderRect.x, renderRect.y);
         }
-
         if (this->currentDirection == Direction::LEFT && this->velocity.x == 0) {
             this->spriteIdleRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
         }
-
         if (this->currentDirection == Direction::RIGHT && this->velocity.x == 0) {
             this->spriteIdleRight.render(renderer, renderRect.x, renderRect.y);
         }
 
-
-
-        // A sprite do player andando só vai ser desenhada se o x ou y da velocidade for diferente de 0
         if (this->currentDirection == Direction::RIGHT && this->velocity.x != 0) {
             this->spriteRight.render(renderer, renderRect.x, renderRect.y);
         }
-
         if (this->currentDirection == Direction::LEFT && this->velocity.x != 0) {
             this->spriteRight.render(renderer, renderRect.x, renderRect.y, SDL_FLIP_HORIZONTAL);
         }
-
         if (this->currentDirection == Direction::UP && this->velocity.y != 0) {
             this->spriteUp.render(renderer, renderRect.x, renderRect.y);
         }
-
         if (this->currentDirection == Direction::DOWN && this->velocity.y != 0) {
             this->spriteDown.render(renderer, renderRect.x, renderRect.y);
         }
     }
-
-   /* if(hitboxTopActive)hitboxTop.render(renderer, camera);
-    if(hitboxBottomActive)hitboxBottom.render(renderer, camera);
-    if(hitboxRightActive)hitboxRight.render(renderer, camera);
-    if(hitboxLeftActive)hitboxLeft.render(renderer, camera);*/
-    
 }
 
 void Warrior::activateAttackHitbox(){
-    hitboxTop.setActive(false);
-    hitboxBottom.setActive(false);
-    hitboxLeft.setActive(false);
-    hitboxRight.setActive(false);
+    this->hitboxTop.setActive(false);
+    this->hitboxBottom.setActive(false);
+    this->hitboxLeft.setActive(false);
+    this->hitboxRight.setActive(false);
 
-    switch (lastDirection) {
+    switch (this->lastDirection) {
         case Direction::UP:
-            hitboxTop.setActive(true);
+            this->hitboxTop.setActive(true);
             break;
         case Direction::DOWN:
-            hitboxBottom.setActive(true);
+            this->hitboxBottom.setActive(true);
             break;
         case Direction::LEFT:
-            hitboxLeft.setActive(true);
+            this->hitboxLeft.setActive(true);
             break;
         case Direction::RIGHT:
-            hitboxRight.setActive(true);
+            this->hitboxRight.setActive(true);
             break;
     }
 }
 
 void Warrior::updateHitbox(){
-
-    hitboxTop.setHitboxPosition(position.x, position.y - (PLAYER_HEIGHT + 2));
-    hitboxBottom.setHitboxPosition(position.x, position.y + (PLAYER_HEIGHT + 2));
-    hitboxRight.setHitboxPosition(position.x + (PLAYER_WIDTH + 2), position.y);
-    hitboxLeft.setHitboxPosition(position.x - (PLAYER_WIDTH + 2), position.y);
-    
+    this->hitboxTop.setHitboxPosition(this->position.x, this->position.y - (PLAYER_HEIGHT + 2));
+    this->hitboxBottom.setHitboxPosition(this->position.x, this->position.y + (PLAYER_HEIGHT + 2));
+    this->hitboxRight.setHitboxPosition(this->position.x + (PLAYER_WIDTH + 2), this->position.y);
+    this->hitboxLeft.setHitboxPosition(this->position.x - (PLAYER_WIDTH + 2), this->position.y);
 }   
 
+void Warrior::takeDamage(int damage){
+    if(!this->invencible){
+        this->hp -= damage;
+        this->invencible = true;
+        this->invencibilityTimer = 0.0f;
+
+        std::cout << "Player tomou " << damage << " de dano! Vida restante: " << this->hp << std::endl;
+
+         if (this->hp <= 0) {
+            this->dead = true;
+            std::cout << "Player morreu!" << std::endl;
+        }
+    }
+}
+
+bool Warrior::isInvencible() const{
+    return this->invencible;
+}
+
 Hitbox* Warrior::getHitboxTop() {
-    return &hitboxTop;
+    return &this->hitboxTop;
 }
 
 Hitbox* Warrior::getHitboxBottom() {
-    return &hitboxBottom;
+    return &this->hitboxBottom;
 }
 
 Hitbox* Warrior::getHitboxRight() {
-    return &hitboxRight;
+    return &this->hitboxRight;
 }
 
 Hitbox* Warrior::getHitboxLeft() {
-    return &hitboxLeft;
+    return &this->hitboxLeft;
 }
 
-
-
 void Warrior::startAttack() {
-    isAttacking = true;
+    this->isAttacking = true;
 }
 
 void Warrior::stopAttack() {
-    isAttacking = false;
-    alreadyHit = false;
+    this->isAttacking = false;
+    this->alreadyHit = false;
 }
 
 bool Warrior::isAttackingNow() const {
-    return isAttacking;
+    return this->isAttacking;
 }
 
 bool Warrior::hasAlreadyHit() const {
-    return alreadyHit;
+    return this->alreadyHit;
 }
 
 void Warrior::setAlreadyHit(bool value) {
-    alreadyHit = value;
+    this->alreadyHit = value;
 }
 
 Hitbox* Warrior::getActiveHitbox() const {
-    if (hitboxTopActive) return const_cast<Hitbox*>(&hitboxTop);
-    if (hitboxBottomActive) return const_cast<Hitbox*>(&hitboxBottom);
-    if (hitboxRightActive) return const_cast<Hitbox*>(&hitboxRight);
-    if (hitboxLeftActive) return const_cast<Hitbox*>(&hitboxLeft);
+    if (this->hitboxTopActive) return const_cast<Hitbox*>(&this->hitboxTop);
+    if (this->hitboxBottomActive) return const_cast<Hitbox*>(&this->hitboxBottom);
+    if (this->hitboxRightActive) return const_cast<Hitbox*>(&this->hitboxRight);
+    if (this->hitboxLeftActive) return const_cast<Hitbox*>(&this->hitboxLeft);
     return nullptr;
+}
+
+SDL_Rect& Warrior::getRect() {
+    return this->rect; 
+}
+
+const SDL_Rect& Warrior::getRect() const {
+    return this->rect;
 }

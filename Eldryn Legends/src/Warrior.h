@@ -9,6 +9,10 @@ private:
     int swordDamage;
     bool idle = false;
     bool isAttacking = false;
+    bool invencible;
+    bool dead = false;
+    float invencibilityTimer;
+    const float INVINCIBILITY_DURATION = 0.5f;
 
     //Hitbox
     Hitbox hitboxTop;
@@ -65,12 +69,17 @@ public:
     Hitbox* getActiveHitbox() const;
     void activateAttackHitbox();
     void updateHitbox() override;
+    void takeDamage(int damage);
+    bool isInvencible() const;
 
     Hitbox* getHitboxTop();
     Hitbox* getHitboxBottom();
     Hitbox* getHitboxRight();
     Hitbox* getHitboxLeft();
     
+    SDL_Rect& getRect();
+    const SDL_Rect& getRect() const;
+
     int getSwordDamage(){
         return this->swordDamage;
     }
