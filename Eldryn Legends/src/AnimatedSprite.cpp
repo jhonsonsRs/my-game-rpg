@@ -3,16 +3,23 @@
 #include <iostream>
 
 AnimatedSprite::AnimatedSprite(SDL_Texture* spriteAtlas, int frameWidth, int frameHeight, int frameCount, float frameDuration, bool loop)
-    : spriteAtlas(spriteAtlas), frameWidth(frameWidth), frameHeight(frameHeight),
-      frameCount(frameCount), frameDuration(frameDuration), loop(loop),
-      currentFrame(0), elapsedTime(0.0f)
+    : spriteAtlas(spriteAtlas), 
+    frameWidth(frameWidth), 
+    frameHeight(frameHeight),
+    frameCount(frameCount), 
+    frameDuration(frameDuration), 
+    loop(loop),
+    currentFrame(0), 
+    elapsedTime(0.0f)
 {
+
+    frames.reserve(frameCount); //otimização de memória
+
     for (int i = 0; i < this->frameCount; i++) {
         SDL_Rect frameRect = { i * this->frameWidth, 0, this->frameWidth, this->frameHeight };
         this->frames.push_back(frameRect);
     }
 }
-AnimatedSprite::~AnimatedSprite(){}
 
 void AnimatedSprite::update(float dt){
     this->elapsedTime += dt;

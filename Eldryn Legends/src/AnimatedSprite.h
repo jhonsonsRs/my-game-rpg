@@ -4,7 +4,7 @@
 
 class AnimatedSprite{
 private:    
-    SDL_Texture* spriteAtlas;
+    SDL_Texture* spriteAtlas = nullptr;
     int frameWidth;
     int frameHeight;
     int frameCount; 
@@ -15,7 +15,7 @@ private:
     std::vector<SDL_Rect> frames;
 public:
     AnimatedSprite(SDL_Texture* spriteAtlas, int framWidth, int framHeight, int frameCount, float frameDuration, bool loop);
-    ~AnimatedSprite();
+    ~AnimatedSprite() = default;
 
     void update(float dt);
     void render(SDL_Renderer* renderer, int x, int y, SDL_RendererFlip flip = SDL_FLIP_NONE);
