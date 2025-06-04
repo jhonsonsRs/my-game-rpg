@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include "Entity.h"
 #include "AnimatedSprite.h"
+#include "TextureManager.h"
 #include "Hitbox.h"
 
 class Warrior : public Entity{
@@ -41,19 +42,13 @@ private:
     AnimatedSprite spriteIdleDown;
     AnimatedSprite spriteIdleRight;
 
+    TextureManager* textureManager;
+
     enum class Direction { RIGHT, LEFT, UP, DOWN};
     Direction currentDirection;
     Direction lastDirection;
 public:
-    Warrior(const int x, const int y, SDL_Texture* spriteAtlasRight, 
-        SDL_Texture* spriteAtlasUp, 
-        SDL_Texture* spriteAtlasDown, 
-        SDL_Texture* spriteAtlasRight2, 
-        SDL_Texture* spriteAtlasUp2, 
-        SDL_Texture* spriteAtlasDown2,
-        SDL_Texture* spriteAtlasHitUp,
-        SDL_Texture* spriteAtlasHitDown,
-        SDL_Texture* spriteAtlasHitRight);
+    Warrior(const int x, const int y, TextureManager* textureManager);
     ~Warrior() override;
 
     void update(float dt, const Uint8* keys) override;

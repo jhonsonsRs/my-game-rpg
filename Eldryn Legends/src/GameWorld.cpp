@@ -2,7 +2,7 @@
 #include "GlobalProperties.h"
 #include "Map.h"
 #include "Warrior.h"
-#include "Goblin.h"  // Alterado de Wolf para Goblin
+#include "Goblin.h" 
 #include "Camera.h"
 #include <memory>
 #include <iostream>
@@ -101,49 +101,14 @@ void GameWorld::map(){
     }
 }
 
-GameWorld::GameWorld(SDL_Renderer* renderer, 
-    SDL_Texture* playerSpriteAtlasRight, 
-    SDL_Texture* playerSpriteAtlasUp, 
-    SDL_Texture* playerSpriteAtlasDown, 
-    SDL_Texture* playerSpriteAtlasRight2, 
-    SDL_Texture* playerSpriteAtlasUp2, 
-    SDL_Texture* playerSpriteAtlasDown2,
-    SDL_Texture* playerSpriteAtlasHitUp,
-    SDL_Texture* playerSpriteAtlasHitDown,
-    SDL_Texture* playerSpriteAtlasHitRight,
-
-    SDL_Texture* goblinSpriteAtlasRight, 
-    SDL_Texture* goblinSpriteAtlasUp, 
-    SDL_Texture* goblinSpriteAtlasDown, 
-    SDL_Texture* goblinSpriteAtlasRight2, 
-    SDL_Texture* goblinSpriteAtlasUp2, 
-    SDL_Texture* goblinSpriteAtlasDown2,
-    SDL_Texture* goblinSpriteAtlasHitUp,
-    SDL_Texture* goblinSpriteAtlasHitDown,
-    SDL_Texture* goblinSpriteAtlasHitRight
-) : camera() {
+GameWorld::GameWorld(SDL_Renderer* renderer, TextureManager* textureManager
+) : camera(), textureManager(textureManager) {
     this->map();
     this->player = std::make_unique<Warrior>(BASE_WIDTH / 2, BASE_HEIGHT / 2, 
-                                            playerSpriteAtlasRight, 
-                                            playerSpriteAtlasUp, 
-                                            playerSpriteAtlasDown, 
-                                            playerSpriteAtlasRight2,
-                                            playerSpriteAtlasUp2, 
-                                            playerSpriteAtlasDown2,
-                                            playerSpriteAtlasHitUp,
-                                            playerSpriteAtlasHitDown,
-                                            playerSpriteAtlasHitRight);
+                                                textureManager);
 
     this->enemyGoblin = std::make_unique<Goblin>(BASE_WIDTH / 2, BASE_HEIGHT / 2,
-                                                goblinSpriteAtlasRight, 
-                                                goblinSpriteAtlasUp,
-                                                goblinSpriteAtlasDown, 
-                                                goblinSpriteAtlasRight2, 
-                                                goblinSpriteAtlasUp2, 
-                                                goblinSpriteAtlasDown2,
-                                                goblinSpriteAtlasHitUp,
-                                                goblinSpriteAtlasHitDown,
-                                                goblinSpriteAtlasHitRight); 
+                                                textureManager);
     
     this->gameTerrain1 = std::make_unique<Map>(renderer, "C:/Games/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain1, 16, MAP_WIDTH, MAP_WIDTH);
     this->gameTerrain2 = std::make_unique<Map>(renderer, "C:/Games/Eldryn Legends/assets/maps/tilesetts.png", this->mapTerrain2, 16, MAP_WIDTH, MAP_WIDTH);
