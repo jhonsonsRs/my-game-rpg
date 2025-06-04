@@ -31,4 +31,4 @@ public:
     void render(SDL_Renderer* renderer);
     void update(float dt, const Uint8* keys);
     void handleInput(const SDL_Event& event);
-};
+}

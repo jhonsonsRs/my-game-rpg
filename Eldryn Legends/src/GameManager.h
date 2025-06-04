@@ -25,4 +25,4 @@ public:
     void render(float dt);
     void clean();
     void run();
-};
+}
