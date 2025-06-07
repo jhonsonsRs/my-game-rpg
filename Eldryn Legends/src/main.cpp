@@ -5,7 +5,7 @@ int main(int argc, char* argv[]){
     GameManager game;
 
     srand(time(0));
-    if(!game.init("MonkeyQuest", SCREEN_WIDTH, SCREEN_HEIGHT)){
+    if(!game.init("Eldryn Legends", SCREEN_WIDTH, SCREEN_HEIGHT)){
         return -1;
     }
 

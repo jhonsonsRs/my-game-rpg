@@ -17,5 +17,8 @@ inline constexpr int BASE_HEIGHT = SCREEN_HEIGHT / 2;
 
 inline constexpr int MAP_WIDTH = 60;
 inline constexpr int MAP_HEIGHT = 60;
+inline constexpr int TILE_SIZE = 16;
+
+const float GOBLIN_DETECTION_RADIUS = 60.0f;
 
 #endif //GLOBALPROPERTIES

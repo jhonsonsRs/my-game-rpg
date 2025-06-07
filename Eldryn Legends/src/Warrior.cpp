@@ -9,7 +9,7 @@ const int warriorWidth = 64;
 
 Warrior::Warrior(const int x, const int y, TextureManager* textureManager) :
 
-    Entity(x, y, 50, 100, PLAYER_WIDTH, PLAYER_HEIGHT),
+    Entity(x, y, 50, hp, PLAYER_WIDTH, PLAYER_HEIGHT),
     hitboxTop(0, 0, HITBOX_SIZE, HITBOX_SIZE),     
     hitboxBottom(0, 0, HITBOX_SIZE, HITBOX_SIZE),  
     hitboxRight(0, 0, HITBOX_SIZE, HITBOX_SIZE),   
@@ -27,6 +27,8 @@ Warrior::Warrior(const int x, const int y, TextureManager* textureManager) :
     lastDirection(Direction::RIGHT),
     invencible(false),
     invencibilityTimer(0.0f),
+    blinkTimer(0.0f),
+    isVisible(true),
     swordDamage(20) {}
 
 Warrior::~Warrior() {
@@ -65,8 +67,16 @@ void Warrior::handleEvents(const SDL_Event& event) {
 void Warrior::update(float dt, const Uint8* keys) {
     if(this->invencible){
         this->invencibilityTimer += dt;
+        this->blinkTimer +=  dt;
+
+        if(this->blinkTimer >= 0.1f) {
+            this->isVisible = !this->isVisible;
+            this->blinkTimer = 0.0f;
+        }
+
         if(this->invencibilityTimer >= INVINCIBILITY_DURATION){
             this->invencible = false;
+            this->isVisible = true;
         }
     }
 
@@ -182,6 +192,7 @@ void Warrior::update(float dt, const Uint8* keys) {
 }
 
 void Warrior::render(SDL_Renderer* renderer, const SDL_Rect& camera) {
+    if(!this->isVisible) return;
     SDL_Rect renderRect;
     renderRect.x = this->rect.x - camera.x;
     renderRect.y = this->rect.y - camera.y;
@@ -259,18 +270,31 @@ void Warrior::updateHitbox(){
     this->hitboxLeft.setHitboxPosition(this->position.x - (PLAYER_WIDTH + 2), this->position.y);
 }   
 
+void Warrior::reset(){
+    hp = maxHp;
+    dead = false;
+    position = Vector(BASE_WIDTH / 2, BASE_HEIGHT / 2);
+}
+
 void Warrior::takeDamage(int damage){
-    if(!this->invencible){
+    if(!this->invencible) {
         this->hp -= damage;
-        this->invencible = true;
-        this->invencibilityTimer = 0.0f;
-
-        std::cout << "Player tomou " << damage << " de dano! Vida restante: " << this->hp << std::endl;
-
-         if (this->hp <= 0) {
+        if(this->hp <= 0) {
             this->dead = true;
-            std::cout << "Player morreu!" << std::endl;
+            this->hp = 0;
         }
+
+        this->invencible = true;
+        this->invencibilityTimer = 0.0f; // Reset the timer
+        this->blinkTimer = 0.0f;
+        this->isVisible = true;
+    }
+}
+
+void Warrior::heal(int amount){
+    hp += amount;
+    if(this->hp > maxHp){
+        this->hp = maxHp;
     }
 }
 

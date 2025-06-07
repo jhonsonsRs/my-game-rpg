@@ -13,7 +13,12 @@ private:
     bool invencible;
     bool dead = false;
     float invencibilityTimer;
+    int hp = 100;
+    int maxHp = 100;
     const float INVINCIBILITY_DURATION = 0.5f;
+    bool isVisible = true;
+    const float BLINK_INTERVAL = 0.1f; // Pisca a cada 0.1 segundos
+    float blinkTimer = 0.0f;
 
     //Hitbox
     Hitbox hitboxTop;
@@ -54,6 +59,13 @@ public:
     void update(float dt, const Uint8* keys) override;
     void render(SDL_Renderer* renderer, const SDL_Rect& camera) override;
     void handleEvents(const SDL_Event& event) override;
+
+    int getHealth() const { return hp; }
+    int getMaxHealth() const { return maxHp; }
+    bool isDead() const { return dead; }
+    void reset();
+    void heal(int amount);
+
 
     void startAttack();
     void stopAttack();    

@@ -52,9 +52,12 @@ public:
     void render(SDL_Renderer* renderer, const SDL_Rect& camera) override;
     void handleEvents(const SDL_Event& event) override;
     void update(float dt, const Uint8* keys) override;
+    void update(float dt, const Vector& playerPosition);
+    void defaultMovement(float dt);
     void updateHitbox() override;
     void takeDamage(int damage);
     bool isDead() const;
+    float distance(const Vector& a, const Vector& b);
 
     void handleAttack(float dt);
     void activateAttack(Direction direction);

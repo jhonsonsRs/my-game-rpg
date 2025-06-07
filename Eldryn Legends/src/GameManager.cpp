@@ -3,6 +3,8 @@
 #include "GlobalProperties.h"
 #include <iostream>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include "C:\Games\Eldryn Legends\math-vector.h"
 using Vector = Mylib::Math::Vector<float, 2>;
 
@@ -10,7 +12,11 @@ float getTime() {
     return static_cast<float>(SDL_GetTicks()) / 1000.0;
 }
 
-GameManager::GameManager() : window(nullptr), renderer(nullptr), isRunning(false) {}
+GameManager* GameManager::instance = nullptr;
+
+GameManager::GameManager() : window(nullptr), renderer(nullptr), isRunning(false) {
+    instance = this;
+}
 
 SDL_Texture* GameManager::loadTexture(const char* path){
     SDL_Texture* tex = IMG_LoadTexture(renderer, path);
@@ -30,6 +36,17 @@ bool GameManager::init(const char* title, int width, int height) {
         SDL_WINDOW_SHOWN);
 
     SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+    initAudio();
+
+    musicFiles = {
+        "C:/Games/Eldryn Legends/assets/sounds/track1.mp3",
+        "C:/Games/Eldryn Legends/assets/sounds/track2.mp3",
+        "C:/Games/Eldryn Legends/assets/sounds/track3.mp3",
+        "C:/Games/Eldryn Legends/assets/sounds/track4.mp3"
+    };
+
+    playRandomMusic();
 
     if (!this->window) {
         std::cerr << "Erro ao criar a janela: " << SDL_GetError() << std::endl;
@@ -67,6 +84,9 @@ bool GameManager::init(const char* title, int width, int height) {
     textureManager.load("goblin_hit_down", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitDown.png");
     textureManager.load("goblin_hit_right", renderer, "C:/Games/Eldryn Legends/assets/sprites/goblinHitRight.png");
 
+    //potion
+    textureManager.load("health_potion", renderer, "C:/Games/Eldryn Legends/assets/sprites/potion.png");
+
 
     SDL_RenderSetLogicalSize(this->renderer, BASE_WIDTH, BASE_HEIGHT);
 
@@ -74,6 +94,64 @@ bool GameManager::init(const char* title, int width, int height) {
     this->isRunning = true;
     return true;
 }
+
+void GameManager::initAudio(){
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cerr << "SDL_mixer não pôde ser inicializado! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return;
+    }
+    
+    // Volume inicial (0-128)
+    Mix_VolumeMusic(30);
+}
+
+void GameManager::playRandomMusic() {
+    if (musicPlaying) {
+        Mix_HaltMusic();
+    }
+    
+    // Inicializa o gerador de números aleatórios (só precisa ser feito uma vez)
+    static bool seeded = false;
+    if (!seeded) {
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        seeded = true;
+    }
+    
+    // Sorteia uma música aleatória usando rand()
+    int randomIndex = std::rand() % musicFiles.size();
+    currentMusic = Mix_LoadMUS(musicFiles[randomIndex].c_str());
+    
+    if (!currentMusic) {
+        std::cerr << "Falha ao carregar música! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return;
+    }
+    
+    if (Mix_PlayMusic(currentMusic, 0)) {
+        std::cerr << "Falha ao tocar música! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return;
+    }
+    
+    musicPlaying = true;
+    
+    // Configura um callback para quando a música terminar
+    Mix_HookMusicFinished([]() {
+        GameManager::getInstance().musicFinished();
+    });
+}
+
+void GameManager::musicFinished(){
+    musicPlaying = false;
+    playRandomMusic(); // Toca a próxima música
+}
+
+void GameManager::cleanAudio() {
+    if (currentMusic) {
+        Mix_FreeMusic(currentMusic);
+        currentMusic = nullptr;
+    }
+    Mix_CloseAudio();
+}
+
 
 void GameManager::run() {
     float previousTime = getTime();
@@ -83,7 +161,7 @@ void GameManager::run() {
         float dt = currentTime - previousTime;
         previousTime = currentTime;
 
-        this->world->update(dt, keys);
+        this->world->update(dt, keys, this->renderer);
         this->render(dt);
         this->handleEvents(dt);
         SDL_Delay(30);
@@ -109,10 +187,11 @@ void GameManager::render(float dt) {
 
 void GameManager::clean() {
     this->world.reset();
-
+    this->clean();
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
     SDL_Quit();
+    cleanAudio();
 }
 
 GameManager::~GameManager() {

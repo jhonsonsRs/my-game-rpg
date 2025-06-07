@@ -89,91 +89,130 @@ void Goblin::render(SDL_Renderer* renderer, const SDL_Rect& camera){
     }
 }
 
-void Goblin::update(float dt, const Uint8* keys){
-    if(this->dead) return;
+void Goblin::update(float dt, const Uint8* keys){}
+
+void Goblin::update(float dt, const Vector& playerPosition) {
+    if (dead) return;
 
     this->timeSinceLastAttack += dt;
 
-    if(!this->attacking){
-        this->decisionTimer -= dt;     
-        if(this->decisionTimer <= 0.0f){
-            int choice = std::rand() % 5;
-            this->velocity = {0, 0};
-            this->andar = false;
+    Vector goblinPosition = getPosition();
+    float dist = distance(goblinPosition, playerPosition);
 
-            switch(choice){
-                case 0:
-                    this->velocity.x = 0;
-                    this->velocity.y = 0;
-                    this->andar = false;
-                    break;
+    if (attacking) {
+        handleAttack(dt);
+        updateHitbox();
+        rect.x = static_cast<int>(position.x);
+        rect.y = static_cast<int>(position.y);
+        return;
+    }
+
+    // Screen boundary check and direction reversal
+    if (position.x < 0) {
+        position.x = 0;
+        velocity.x = speed;  // Reverse direction to right
+        currentDirection = Direction::RIGHT;
+    } 
+    else if (position.x > SCREEN_WIDTH - GOBLIN_WIDTH) {
+        position.x = SCREEN_WIDTH - GOBLIN_WIDTH;
+        velocity.x = -speed; // Reverse direction to left
+        currentDirection = Direction::LEFT;
+    }
+
+    if (position.y < 0) {
+        position.y = 0;
+        velocity.y = speed;  // Reverse direction to down
+        currentDirection = Direction::DOWN;
+    } 
+    else if (position.y > SCREEN_HEIGHT - GOBLIN_HEIGHT) {
+        position.y = SCREEN_HEIGHT - GOBLIN_HEIGHT;
+        velocity.y = -speed; // Reverse direction to up
+        currentDirection = Direction::UP;
+    }
+
+    if (dist < GOBLIN_DETECTION_RADIUS) {
+        Vector direction = playerPosition - goblinPosition;
+        if (direction.length() > 0.0001f) {
+            direction.normalize();
+            velocity = direction * speed;
+
+            if (std::abs(velocity.x) > std::abs(velocity.y)) {
+                currentDirection = (velocity.x > 0) ? Direction::RIGHT : Direction::LEFT;
+            } else {
+                currentDirection = (velocity.y > 0) ? Direction::DOWN : Direction::UP;
+            }
+        } else {
+            velocity = {0, 0};
+        }
+    } else {
+        decisionTimer -= dt;
+        if (decisionTimer <= 0.0f) {
+            int choice = std::rand() % 5;
+            velocity = {0, 0};
+            andar = false;
+
+            switch (choice) {
                 case 1:
-                    this->andar = true;
-                    this->currentDirection = Direction::UP;
-                    this->lastDirection = Direction::UP;
-                    this->velocity.y = -this->speed * (0.5f + (std::rand() % 100)/100.0f);
+                    andar = true;
+                    velocity.y = -speed;
+                    currentDirection = Direction::UP;
                     break;
                 case 2:
-                    this->andar = true;
-                    this->currentDirection = Direction::DOWN;
-                    this->lastDirection = Direction::DOWN;
-                    this->velocity.y = this->speed * (0.5f + (std::rand() % 100)/100.0f);
+                    andar = true;
+                    velocity.y = speed;
+                    currentDirection = Direction::DOWN;
                     break;
                 case 3:
-                    this->andar = true;
-                    this->currentDirection = Direction::RIGHT;
-                    this->lastDirection = Direction::RIGHT;
-                    this->velocity.x = this->speed * (0.5f + (std::rand() % 100)/100.0f); 
+                    andar = true;
+                    velocity.x = speed;
+                    currentDirection = Direction::RIGHT;
                     break;
                 case 4:
-                    this->andar = true;
-                    this->currentDirection = Direction::LEFT;
-                    this->lastDirection = Direction::LEFT;
-                    this->velocity.x = -this->speed * (0.5f + (std::rand() % 100)/100.0f);
+                    andar = true;
+                    velocity.x = -speed;
+                    currentDirection = Direction::LEFT;
+                    break;
+                default:
+                    andar = false;
                     break;
             }
-
-            this->decisionTimer = 2.0f;
-        }
-
-        if(this->andar){
-            this->position += this->velocity * dt;
-            this->rect.x = static_cast<int>(this->position.x);
-            this->rect.y = static_cast<int>(this->position.y);
+            decisionTimer = 2.0f;
         }
     }
 
-    if(this->attacking) {
-        this->handleAttack(dt);
+    if (andar || dist < GOBLIN_DETECTION_RADIUS) {
+        position += velocity * dt;
+    }
+
+    rect.x = static_cast<int>(position.x);
+    rect.y = static_cast<int>(position.y);
+
+    // Animation updates remain the same...
+    if (velocity.x == 0 && velocity.y == 0) {
+        switch (currentDirection) {
+            case Direction::UP: spriteIdleUp.update(dt); break;
+            case Direction::DOWN: spriteIdleDown.update(dt); break;
+            case Direction::LEFT: spriteIdleRight.update(dt); break;
+            case Direction::RIGHT: spriteIdleRight.update(dt); break;
+        }
     } else {
-        if (this->currentDirection == Direction::UP && this->velocity.y == 0) {
-            this->spriteIdleUp.update(dt);
-        } else if (this->currentDirection == Direction::DOWN && this->velocity.y == 0) {
-            this->spriteIdleDown.update(dt);
-        } else if (this->currentDirection == Direction::LEFT && this->velocity.x == 0) {
-            this->spriteIdleRight.update(dt);
-        } else if (this->currentDirection == Direction::RIGHT && this->velocity.x == 0) {
-            this->spriteIdleRight.update(dt);
+        switch (currentDirection) {
+            case Direction::RIGHT:
+            case Direction::LEFT:
+                spriteRight.update(dt);
+                break;
+            case Direction::UP:
+                spriteUp.update(dt);
+                break;
+            case Direction::DOWN:
+                spriteDown.update(dt);
+                break;
         }
     }
 
-    switch (this->currentDirection) {
-        case Direction::RIGHT:
-            this->spriteRight.update(dt);
-            break;
-        case Direction::LEFT:
-            this->spriteRight.update(dt);
-            break;
-        case Direction::UP:
-            this->spriteUp.update(dt);
-            break;
-        case Direction::DOWN:
-            this->spriteDown.update(dt);
-            break;
-    }
-
-    this->updateHitbox();
+    updateHitbox();
 }
+
 
 void Goblin::handleAttack(float dt){
     this->currentAttackTime += dt;
@@ -279,6 +318,12 @@ bool Goblin::isDead() const{
 
 bool Goblin::isAttacking() const{
     return this->attacking;
+}
+
+float Goblin::distance(const Vector& a, const Vector& b){
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+    return sqrt(dx * dx + dy * dy);
 }
 
 Hitbox* Goblin::getAttackHitbox() {
