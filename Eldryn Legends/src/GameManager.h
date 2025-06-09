@@ -41,6 +41,7 @@ public:
     void clean();
     void run();
 
+    //Singleton: garante que uma classe tenha uma instancia e fornece um ponto de acesso global
     static GameManager& getInstance() {
         return *instance;
     }

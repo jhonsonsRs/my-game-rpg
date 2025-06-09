@@ -127,9 +127,8 @@ GameWorld::GameWorld(SDL_Renderer* renderer, TextureManager* textureManager)
 }
 
 void GameWorld::spawnRandomGoblins(int count) {
-    // Inicializa a semente do rand() se ainda não foi feito
-    static bool seeded = false;
-    if (!seeded) {
+    static bool seeded = false; // variável que mantém seu valor entre chamadas da função.
+    if (!seeded) { 
         std::srand(static_cast<unsigned int>(std::time(nullptr)));
         seeded = true;
     }
@@ -263,7 +262,6 @@ void GameWorld::update(float dt, const Uint8* keys, SDL_Renderer* renderer) {
         spawnRandomGoblins(5); 
     }
 
-    // Use an iterator to safely remove dead goblins while iterating
     auto it = enemyGoblins.begin();
     while (it != enemyGoblins.end()) {
         if (!it->isDead()) {
@@ -311,7 +309,7 @@ void GameWorld::update(float dt, const Uint8* keys, SDL_Renderer* renderer) {
         }
     }
 
-     auto potionIt = healthPotions.begin();
+    auto potionIt = healthPotions.begin();
     while (potionIt != healthPotions.end()) {
         if (!potionIt->isCollected()) {
             SDL_Rect playerRect = player->getRect();
@@ -342,7 +340,7 @@ void GameWorld::update(float dt, const Uint8* keys, SDL_Renderer* renderer) {
 }
 
 void GameWorld::restartGame(){
-        // Reinicia o jogador
+    // Reinicia o jogador
     player->reset();
     
     // Reinicia os inimigos

@@ -101,7 +101,6 @@ void GameManager::initAudio(){
         return;
     }
     
-    // Volume inicial (0-128)
     Mix_VolumeMusic(30);
 }
 
@@ -110,7 +109,7 @@ void GameManager::playRandomMusic() {
         Mix_HaltMusic();
     }
     
-    // Inicializa o gerador de números aleatórios (só precisa ser feito uma vez)
+    // Inicializa o gerador de números aleatórios
     static bool seeded = false;
     if (!seeded) {
         std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -133,7 +132,7 @@ void GameManager::playRandomMusic() {
     
     musicPlaying = true;
     
-    // Configura um callback para quando a música terminar
+    // callback (função de retorno)
     Mix_HookMusicFinished([]() {
         GameManager::getInstance().musicFinished();
     });

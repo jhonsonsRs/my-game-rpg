@@ -107,29 +107,29 @@ void Goblin::update(float dt, const Vector& playerPosition) {
         return;
     }
 
-    // Screen boundary check and direction reversal
     if (position.x < 0) {
         position.x = 0;
-        velocity.x = speed;  // Reverse direction to right
+        velocity.x = speed; 
         currentDirection = Direction::RIGHT;
     } 
     else if (position.x > SCREEN_WIDTH - GOBLIN_WIDTH) {
         position.x = SCREEN_WIDTH - GOBLIN_WIDTH;
-        velocity.x = -speed; // Reverse direction to left
+        velocity.x = -speed; 
         currentDirection = Direction::LEFT;
     }
 
     if (position.y < 0) {
         position.y = 0;
-        velocity.y = speed;  // Reverse direction to down
+        velocity.y = speed;
         currentDirection = Direction::DOWN;
     } 
     else if (position.y > SCREEN_HEIGHT - GOBLIN_HEIGHT) {
         position.y = SCREEN_HEIGHT - GOBLIN_HEIGHT;
-        velocity.y = -speed; // Reverse direction to up
+        velocity.y = -speed;
         currentDirection = Direction::UP;
     }
 
+    //segue o player
     if (dist < GOBLIN_DETECTION_RADIUS) {
         Vector direction = playerPosition - goblinPosition;
         if (direction.length() > 0.0001f) {
@@ -144,6 +144,7 @@ void Goblin::update(float dt, const Vector& playerPosition) {
         } else {
             velocity = {0, 0};
         }
+    //se não anda normal
     } else {
         decisionTimer -= dt;
         if (decisionTimer <= 0.0f) {
